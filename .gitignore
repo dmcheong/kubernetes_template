@@ -1,0 +1,3 @@
+./test/secret/my-secrets.yaml
+./test/secret/monsealedsecret.yaml
+sealed-secrets.pem

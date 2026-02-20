@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mon-pod-alpine
+  namespace: dev
+spec:
+  containers:
+    - name: alpine
+      image: alpine
+      ports:
+        - containerPort: 80

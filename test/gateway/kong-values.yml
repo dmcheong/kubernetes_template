@@ -1,0 +1,12 @@
+env:
+  pg_user: kong
+  pg_database: kong
+  pg_host: kong-postgresql-postgresql
+  pg_password:
+    valueFrom:
+      secretKeyRef:
+        name: kong-ingress-controller-postgresql
+        key: postgresql-password
+
+postgresql:
+  enabled: false  # IMPORTANT : on n’installe pas PostgreSQL via le chart Kong

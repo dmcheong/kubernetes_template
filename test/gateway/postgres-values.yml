@@ -1,0 +1,10 @@
+auth:
+  username: kong
+  database: kong
+  existingSecret: kong-ingress-controller-postgresql
+  secretKeys:
+    userPasswordKey: postgresql-password
+
+primary:
+  service:
+    port: 5432
