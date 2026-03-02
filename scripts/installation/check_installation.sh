@@ -38,13 +38,7 @@ source "$SCRIPT_DIR/install_kubeseal.sh"
 # sealedsecret
 source "$SCRIPT_DIR/install_sealedsecret.sh"
 
-# prometheus
-source "$SCRIPT_DIR/install_prometheus.sh"
-
-# grafana
-source "$SCRIPT_DIR/install_grafana.sh"
-
 echo
-echo "==> Les services kubectl, minikube, asdf et kube-score sont à jour."
+echo "==> Les services kubectl, minikube, asdf, helm, kube-score et kubeseal+sealedsecret sont à jour."
 echo "==> Toutes les vérifications sont terminées."
 echo

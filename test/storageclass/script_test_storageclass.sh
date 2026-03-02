@@ -1,13 +1,7 @@
 #!usr/bin/env bash
 # script testing storageclass in local
 
-# get abolute path
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# set service by script
-source "$SCRIPT_DIR/../services/script_test_services.sh"
-
-# With a real nfs server, set a storageclaas but for lab and mina=imal requirement, not set here
+## With a real nfs (Network File System) server, set a storageclass but for lab and minimal requirement, not set here
 
 # # get abolute path
 # SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,15 +10,15 @@ source "$SCRIPT_DIR/../services/script_test_services.sh"
 # echo "==> Création d une StorageClass:"
 # kubectl apply -f "$SCRIPT_DIR/../template/storageclass-nfs.yml"
 
-# check storageclass exist
-echo "==> Liste des StorageClass:"
-kubectl get storageclass
+# # check storageclass exist
+# echo "==> Liste des StorageClass:"
+# kubectl get storageclass
 
 # get abolute path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# set PersistentVolumeClaim
-echo "==> Création d une  sur un serveur NFS:"
+# set PersistentVolumeClaim and not a server nfs in dev case
+echo "==> Création d une Persistance Volume Claim pour simuler en local un serveur NFS:"
 kubectl apply -f "$SCRIPT_DIR/../template/pvc-local.yml"
 
 # check pvc
@@ -38,7 +32,7 @@ kubectl get pvc
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # use pvc in deployment
-echo "==> Application du déploiement du PVC dans un serveur NFS:"
+echo "==> Application du déploiement du PVC via un serveur NFS (NGINX):"
 kubectl apply -f "$SCRIPT_DIR/../template/deployment-nfs.yml"
 
 # pods

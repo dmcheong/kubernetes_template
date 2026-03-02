@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-# ce script permet la vérification de la dernire version de helm
-# ou l'installe
-# ou met à jour la dernière version indiquée
-# installation via curl et bash
+# This script check or update last version (set in the script) of helm
+# Install with bash
 
 # check if helm exist if not install, version above 3.14.0
 echo "==> Vérification de l installation du service Helm."

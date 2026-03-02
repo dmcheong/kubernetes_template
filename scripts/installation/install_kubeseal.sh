@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 
-# ce script permet la vérification de la dernire version de kubescore
-# ou l'installe
-# ou met à jour la dernière version indiquée
-# installation via 
-# à vérifier
+# This script check or update last version (set in the script) of kubeseal
+# Install with asdf 
 
 # check if NFS exist if not install
 echo "==> Vérification / installation du serveur NFS"
 
-# ---- 1) Vérifier package ----
+# ---- 1) check package ----
 if ! dpkg -s nfs-kernel-server >/dev/null 2>&1; then
   echo "==> nfs-kernel-server non installé -> installation"
   sudo apt update
@@ -18,14 +15,14 @@ else
   echo "==> nfs-kernel-server déjà installé"
 fi
 
-# ---- 2) Répertoire partagé ----
+# ---- 2) shared repertorie ----
 SHARE_DIR="/data"
 echo "==> Préparation du dossier partagé: $SHARE_DIR"
 sudo mkdir -p "$SHARE_DIR"
-# Permissif pour TP/lab (évite les soucis de droits). À durcir en prod.
+# set permission for TP/lab. To hardenning in prod.
 sudo chmod 777 "$SHARE_DIR"
 
-# ---- 3) Exports (source de vérité) ----
+# ---- 3) Exports source ----
 EXPORT_DIR="/etc/exports.d"
 EXPORT_FILE="$EXPORT_DIR/k8s-nfs.exports"
 EXPORT_LINE="$SHARE_DIR *(rw,sync,no_subtree_check,no_root_squash)"
@@ -34,8 +31,8 @@ echo "==> Création du dossier $EXPORT_DIR si absent"
 sudo mkdir -p "$EXPORT_DIR"
 
 echo "==> Nettoyage des anciennes entrées /data dans /etc/exports (si présentes)"
-# On supprime uniquement les lignes qui commencent par "/data " (ou "/data<TAB>")
-# On garde le reste du fichier intact.
+# delete only lines beginnig by "/data " (or "/data<TAB>")
+# keep the other entry in file intact.
 if sudo grep -qE "^[[:space:]]*/data([[:space:]]+|$)" /etc/exports 2>/dev/null; then
   sudo cp /etc/exports "/etc/exports.bak.$(date +%Y%m%d-%H%M%S)"
   sudo sed -i -E "/^[[:space:]]*\/data([[:space:]]+|$)/d" /etc/exports
@@ -51,10 +48,10 @@ echo "$EXPORT_LINE" | sudo tee "$EXPORT_FILE" >/dev/null
 echo "==> Rechargement exports + redémarrage NFS"
 sudo exportfs -rav
 
-# selon distro, l'un des deux noms de service existe
+# wich distro, existing one of the name service
 sudo systemctl restart nfs-server 2>/dev/null || sudo systemctl restart nfs-kernel-server
 
-# ---- 5) Vérification ----
+# ---- 5) checking ----
 echo
 echo "==> Exports actifs :"
 sudo exportfs -v

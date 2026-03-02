@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
-# ce script permet la vérification de la dernire version de SealedSecret
-# ou l'install
-# ou met à jour la dernière version indiquée
-# installation via bitnami?
-# à vérifier
+# This script check or update last version (set in the script) of sealedsecret
+# Install with bitnami
 
 # check if sealedsecret exist if not install
 get_latest_github_tag() {
-  # Récupère le tag de la dernière release via redirection HTTP
+  # get last tag release by redirection HTTP
   # ex: v0.34.0
   local repo="$1"
   curl -fsSI "https://github.com/${repo}/releases/latest" \
@@ -23,9 +20,9 @@ LOCAL_BIN="$HOME/.local/bin"
 mkdir -p "$LOCAL_BIN"
 export PATH="$LOCAL_BIN:$PATH"
 
-# ---------------- Config ----------------
+# ---------------- Config set for this project ----------------
 REPO="bitnami-labs/sealed-secrets"
-MIN_KUBESEAL_VERSION="0.34.0"   # ajuste si tu veux
+MIN_KUBESEAL_VERSION="0.34.0"
 
 echo "==> Détection dernière release sealed-secrets..."
 LATEST_TAG="$(get_latest_github_tag "$REPO")"
@@ -82,7 +79,7 @@ if ! command -v kubectl >/dev/null 2>&1; then
   exit 1
 fi
 
-# Détection simple : deployment sealed-secrets-controller dans kube-system
+# simple detection : deployment sealed-secrets-controller dans kube-system
 if kubectl -n kube-system get deploy sealed-secrets-controller >/dev/null 2>&1; then
   echo "==> Controller déjà installé."
 else

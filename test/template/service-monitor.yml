@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nginx
+  labels:
+    release: kube-prometheus-stack   # important: doit matcher la config de ton Prometheus
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  namespaceSelector:
+    matchNames:
+      - dev   # ou le namespace où est ton service
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s

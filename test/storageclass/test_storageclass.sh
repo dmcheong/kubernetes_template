@@ -1,8 +1,8 @@
 #!usr/bin/env bash
 
-# Dans Kubernetes, une StorageClass permet d'automatiser la création et la gestion des volumes persistants.
+# Dans Kubernetes, une StorageClass permet d automatiser la création et la gestion des volumes persistants.
 # Cela simplifie le stockage pour les applications, offrant flexibilité et scalabilité. Dans ce TP, 
-# nous allons utiliser un serveur NFS comme backend de stockage et configurer une StorageClass pour provisionner dynamiquement des volumes.
+# nous allons utiliser un serveur NFS (Network File System) comme backend de stockage et configurer une StorageClass pour provisionner dynamiquement des volumes.
 
 # make sur miniube for test is launched
 minikube start

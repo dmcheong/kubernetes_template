@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-# ce script permet la vérification de la dernire version de kubectl
-# ou l'installe
-# ou met à jour la dernière version indiquée
-# installation via curl
+# This script check or update last version (set in the script) of kubectl
+# Install with curl
 
 # check if kubectl exist if not install, version above 1.34.0
 echo "==> Vérification de l installation du service kubectl."
