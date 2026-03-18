@@ -1,0 +1,30 @@
+serverFiles:
+  alerting_rules.yml:
+    groups:
+      - name: infrastructure
+        rules:
+          - alert: TargetDown
+            expr: up == 0
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Target {{ $labels.job }}/{{ $labels.instance }} is down"
+
+          - alert: HighMemoryUsage
+            expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Memory usage above 85% on {{ $labels.instance }}"
+
+      - name: otel-demo-application
+        rules:
+          - alert: OtelCollectorDown
+            expr: up{job="otel-collector"} == 0
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: "OpenTelemetry Collector is down"

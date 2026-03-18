@@ -24,7 +24,7 @@ kubectl get all
 ##
 # create deployment
 echo "==> Création d un déploiement:"
-kubectl apply -f ./../template/nginx-deployment.yml
+kubectl apply -f ./../template/deployment/nginx-deployment.yml
 
 # check pods in dev namespace
 echo "==> Liste des pods dans l environnement namespaces -> dev:"
@@ -65,4 +65,4 @@ kubectl rollout undo deployment nginx-deployment
 
 # check with kube-score
 echo "==> Analyse du déploiement:"
-kube-score score ./../template/nginx-deployment.yml
+kube-score score ./../template/deployment/nginx-deployment.yml

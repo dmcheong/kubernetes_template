@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-
-#
+# test setting grafana only
+# prometheus github community already set stack grafana in so this file.sh is just for information
+# this file.sh is a training for deployment not use for automation
 
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update

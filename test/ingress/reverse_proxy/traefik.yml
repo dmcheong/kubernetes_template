@@ -1,0 +1,72 @@
+deployment:
+  replicas: 1
+
+ingressClass:
+  enabled: true
+  isDefaultClass: false
+  name: traefik
+
+providers:
+  kubernetesCRD:
+    enabled: true
+  kubernetesIngress:
+    enabled: true
+
+ports:
+  web:
+    port: 8000
+    exposedPort: 80
+    expose:
+      default: true
+  websecure:
+    port: 8443
+    exposedPort: 443
+    expose:
+      default: true
+  traefik:
+    port: 9000
+    expose:
+      default: false
+  metrics:
+    port: 9100
+    expose:
+      default: false
+
+service:
+  type: LoadBalancer
+
+api:
+  dashboard: true
+  insecure: false
+
+logs:
+  general:
+    level: INFO
+
+metrics:
+  prometheus:
+    enabled: true
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+    entryPoint: metrics
+  otlp:
+    enabled: true
+    serviceName: traefik
+    http:
+      enabled: true
+      endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/metrics"
+
+tracing:
+  otlp:
+    enabled: true
+    http:
+      enabled: true
+      endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces"
+
+serviceMonitor:
+  enabled: true
+  namespace: monitoring
+
+additionalArguments:
+  - "--ping=true"

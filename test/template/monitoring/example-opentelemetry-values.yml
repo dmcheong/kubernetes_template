@@ -1,0 +1,73 @@
+# OpenTelemetry Demo - Helm values pour le lab
+# https://github.com/open-telemetry/opentelemetry-helm-charts
+
+# Désactiver les composants d'observabilité intégrés
+# On les installe nous-mêmes dans les modules suivants
+opentelemetry-collector:
+  enabled: false
+
+jaeger:
+  enabled: false
+
+prometheus:
+  enabled: false
+
+grafana:
+  enabled: false
+
+# Activer tous les services de l'application démo
+# IMPORTANT: Le Collector est déployé dans le même namespace (otel-demo)
+# pour éviter les problèmes de communication cross-namespace
+default:
+  envOverrides:
+    - name: OTEL_COLLECTOR_NAME
+      value: "otel-collector.otel-demo.svc.cluster.local"
+
+components:
+  # Services frontend
+  frontend-proxy:
+    enabled: true
+    service:
+      type: NodePort
+      nodePort: 30080
+
+  frontend:
+    enabled: true
+
+  # Services backend
+  ad:
+    enabled: true
+
+  cart:
+    enabled: true
+
+  checkout:
+    enabled: true
+
+  currency:
+    enabled: true
+
+  email:
+    enabled: true
+
+  flagd:
+    enabled: true
+
+  payment:
+    enabled: true
+
+  product-catalog:
+    enabled: true
+
+  quote:
+    enabled: true
+
+  recommendation:
+    enabled: true
+
+  shipping:
+    enabled: true
+
+  # Générateur de charge
+  load-generator:
+    enabled: true

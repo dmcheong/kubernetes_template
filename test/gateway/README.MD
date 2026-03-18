@@ -1,5 +1,6 @@
 note:
 
-kong Gateway peut être considéré comme un Ingress.
+kong Gateway can be considered as an ingress.
+
 Flux:
 Internet → Kong → Service → Pods

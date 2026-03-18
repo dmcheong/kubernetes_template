@@ -1,7 +1,7 @@
 #!usr/bin/env bash
 # script testing services in local
 # services : clusterip
-# need deployement up
+# need deployment up
 
 # check deployment is up
 echo "==> Vérification du déploiement avant la mise en place des services:"
@@ -19,7 +19,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # set cluster service
 echo "==> Création du service clusterip:"
-kubectl apply -f "$SCRIPT_DIR/../template/nginx-clusterip-service.yml"
+kubectl apply -f "$SCRIPT_DIR/../template/service/nginx-clusterip-service.yml"
 
 # get services
 echo "==> Vérification de la liste des services:"
@@ -31,7 +31,7 @@ echo "==> Cette section est un test de connexion sur un pod temporaire:"
 # create temporary pods
 echo "==> Création d un pod temporaire:"
 kubectl run test-pod --image=busybox --restart=Never -- sleep 3600
-echo "==> Temps d attente avec latence volontaire pour le pode temporaire pour éviter des erreurs."
+echo "==> Temps d attente avec latence volontaire pour le pod temporaire pour éviter des erreurs."
 kubectl wait --for=condition=Ready pod/test-pod --timeout=30s
 
 # open terminal 
@@ -50,7 +50,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # set service
 echo "==> Application du service NodePort:"
-kubectl apply -f "$SCRIPT_DIR/../template/nginx-nodeport-service.yml"
+kubectl apply -f "$SCRIPT_DIR/../template/service/nginx-nodeport-service.yml"
 
 # get node ip
 echo "==> Vérifier l IP du noeud:"
@@ -77,4 +77,4 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ##
 # check with kube-score
 echo "==> Score du fichier.yml du service NodePort:"
-kube-score score "$SCRIPT_DIR/../template/nginx-nodeport-service.yml"
+kube-score score "$SCRIPT_DIR/../template/service/nginx-nodeport-service.yml"

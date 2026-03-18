@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
+# list of all scripts about basique tools => check install or upgrade tools
 
-# ce script regroupe la liste des outils/scripts qui permettront le bon déroulement
-# automatique du déploiement du cluster Minikube
-# si un script ne détecte pas l'outil, il sera installé ou mis à jour 
-
-# fonction de comparaison des outils à utiliser avec cette syntaxe
+# function to comparison tools, use like this:
 # version_lt "CURRENT_VERSION_TOOL" "TOOL_MINIMUM_VERSION"
 version_lt() {
   # true (0) si $1 < $2
@@ -16,6 +13,9 @@ echo
 
 # get abolute path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# docker
+source "$SCRIPT_DIR/install_docker_engine.sh"
 
 # helm
 source "$SCRIPT_DIR/install_helm.sh"
@@ -39,6 +39,6 @@ source "$SCRIPT_DIR/install_kubeseal.sh"
 source "$SCRIPT_DIR/install_sealedsecret.sh"
 
 echo
-echo "==> Les services kubectl, minikube, asdf, helm, kube-score et kubeseal+sealedsecret sont à jour."
-echo "==> Toutes les vérifications sont terminées."
+echo "==> Les services helm, kubectl, minikube, asdf, kube-score et kubeseal+sealedsecret sont à jour."
+echo "==> La vérification de tous les outils est terminée (installation + mise à jour)."
 echo

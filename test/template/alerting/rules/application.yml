@@ -1,0 +1,88 @@
+groups:
+  - name: otel-demo-application
+    rules:
+      # ============================================
+      # Alerte : Collector OTel down
+      # ============================================
+      - alert: OtelCollectorDown
+        expr: up{job="otel-collector"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "OpenTelemetry Collector is down"
+          description: |
+            The OpenTelemetry Collector is not responding.
+            All application metrics may be missing.
+
+            Check: kubectl get pods -n otel-demo -l app.kubernetes.io/name=opentelemetry-collector
+
+      # ============================================
+      # Alerte : Latence P99 trop haute
+      # ============================================
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.99,
+            sum by (service_name, le) (
+              rate(otel_http_server_duration_seconds_bucket[5m])
+            )
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "P99 latency above 500ms for {{ $labels.service_name }}"
+          description: |
+            The service {{ $labels.service_name }} has a P99 latency above 500ms.
+            This means 1% of users experience latency > 500ms.
+
+            Current P99: {{ $value | printf "%.3f" }}s
+          value: "{{ $value | printf \"%.3f\" }}s"
+
+      # ============================================
+      # Alerte : Taux d'erreur trop haut (calcul en %)
+      # ============================================
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum by (service_name) (
+              rate(otel_http_server_duration_seconds_count{http_status_code=~"5.."}[5m])
+            )
+            /
+            sum by (service_name) (
+              rate(otel_http_server_duration_seconds_count[5m])
+            )
+          ) * 100 > 1
+        for: 5m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "Error rate above 1% for {{ $labels.service_name }}"
+          description: |
+            The service {{ $labels.service_name }} returns more than 1% of 5xx errors.
+            This directly impacts users.
+
+            Current error rate: {{ $value | printf "%.2f" }}%
+          value: "{{ $value | printf \"%.2f\" }}%"
+
+      # ============================================
+      # Alerte : Plus aucune requête (service cassé ?)
+      # ============================================
+      - alert: NoTraffic
+        expr: |
+          sum by (service_name) (
+            rate(otel_http_server_duration_seconds_count[5m])
+          ) == 0
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "No HTTP traffic for {{ $labels.service_name }}"
+          description: |
+            The service {{ $labels.service_name }} has not received any HTTP request
+            in the last 10 minutes. Either the service is broken or traffic
+            is being routed elsewhere.

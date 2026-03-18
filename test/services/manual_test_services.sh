@@ -10,7 +10,7 @@ kubectl get deployment.app
 kubectl get pods -o wide
 
 # if deployment not set
-# kubectl apply-f ./../template/nginx-deployment.yml
+# kubectl apply-f ./../template/deployment/nginx-deployment.yml
 
 
 ##
@@ -19,7 +19,7 @@ kubectl get pods -o wide
 # Un Service de type ClusterIP permet d’attribuer une IP fixe pour rendre l’application accessible aux autres Pods du cluster.
 
 # set service
-kubectl apply -f ./../template/nginx-clusterip-service.yml
+kubectl apply -f ./../template/service/nginx-clusterip-service.yml
 
 # get services
 kubectl get services
@@ -42,14 +42,14 @@ wget -qO- http://nginx-clusterip-service
 kubectl delete pod test-pod
 
 # delete clusterip
-kubectl delete -f ./../template/nginx-clusterip-service.yml
+kubectl delete -f ./../template/service/nginx-clusterip-service.yml
 
 
 ##
 # expose outside cluster (NodePort)
 
 # set service
-kubectl apply -f ./../template/nginx-nodeport-service.yml
+kubectl apply -f ./../template/service/nginx-nodeport-service.yml
 
 # get node ip
 kubectl get nodes -o wide
@@ -60,4 +60,4 @@ curl http://<IP_NODE>:30007
 
 ##
 # score
-kube-score score ./../template/nginx-nodeport-service.yml
+kube-score score ./../template/service/nginx-nodeport-service.yml

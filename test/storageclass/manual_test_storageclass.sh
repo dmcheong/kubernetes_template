@@ -27,7 +27,7 @@ echo "/data *(rw,sync,no_subtree_check)" | sudo tee -a /etc/exports
 sudo systemctl restart nfs-kernel-server
 
 # set storageclass
-kubectl apply -f ./../template/storageclass-nfs.yml
+kubectl apply -f ./../template/storage/storageclass-nfs.yml
 
 # check storageclass
 kubectl get storageclass
@@ -37,14 +37,14 @@ kubectl get storageclass
 # create persistentvolumeclaim
 
 # set pvc
-kubectl apply -f ./../template/pvc-nfs.yml
+kubectl apply -f ./../template/storage/pvc-nfs.yml
 
 # check pvc
 kubectl get pvc
 
 ##
 # use pvc in deployment
-kubectl apply -f ./../template/deployment-nfs.yml
+kubectl apply -f ./../template/deployment/deployment-nfs.yml
 
 # pods
 kubctl get pods

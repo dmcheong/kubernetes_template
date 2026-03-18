@@ -1,5 +1,7 @@
 #!usr/bin/env bash
 # script testing sealedsecret in local
+# description: set a secret first and after crypte it
+# do not push secret.yaml in repository or use vault for production
 
 # get abolute path
 # SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -21,18 +23,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # set sealed-secret
 echo "==> Application du secret:"
-kubectl apply -f "$SCRIPT_DIR/../secret/my-secrets.yaml"
+kubectl apply -f "$SCRIPT_DIR/../template/secret/my-secrets.yaml"
 
 # check content
 echo "==> Vérification du contenu:"
 kubectl get secret monsecret -o yaml -n dev
 # set a .gitignore for secret as usual
 
-#
+# get desciption
 # kubectl describe secret monsecret
 
 # test kubeseal version
-kubeseal --version
+echo "==> la version de kubeseal est:"
+cat ./../../.tool-versions
 
 # get abolute path
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -47,7 +50,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # generate seleadsecret from existing secret
 echo "==> Généreration un SealedSecret à partir du Secret existant:"
-kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format=yaml < "$SCRIPT_DIR/../secret/my-secrets.yaml" > "$SCRIPT_DIR/../secret/monsealedsecret.yaml"
+kubeseal --controller-name=sealed-secrets-controller --controller-namespace=kube-system --format=yaml < "$SCRIPT_DIR/../template/secret/my-secrets.yaml" > "$SCRIPT_DIR/../template/secret/monsealedsecret.yaml"
 
 
 ##
@@ -57,7 +60,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # use and deployment seleadsecret
 echo "==> Utilisation du secret:"
-kubectl apply -f "$SCRIPT_DIR/../secret/monsealedsecret.yaml"
+kubectl apply -f "$SCRIPT_DIR/../template/secret/monsealedsecret.yaml"
 
 # check sealedsecret
 echo "==> Vérifier que le sealedsecret a été créer:"
@@ -66,3 +69,4 @@ kubectl get sealedsecrets -n dev
 # check if keberenets create a standard secret
 echo "==> Vérifier que Kubernetes a généré un Secret standard:"
 kubectl get secret monsecret -o jsonpath="{.data.password}" | base64 --decode
+echo

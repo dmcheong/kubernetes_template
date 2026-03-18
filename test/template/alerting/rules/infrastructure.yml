@@ -1,0 +1,79 @@
+groups:
+  - name: infrastructure
+    rules:
+      # ============================================
+      # Alerte 1 : Un target ne répond plus
+      # ============================================
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Target {{ $labels.job }}/{{ $labels.instance }} is down"
+          description: |
+            The target {{ $labels.instance }} in job {{ $labels.job }}
+            has been down for more than 2 minutes.
+
+            Possible causes:
+            - The application has crashed
+            - Network issue between Prometheus and target
+            - The /metrics endpoint is not responding
+          runbook: "https://wiki.example.com/runbooks/target-down"
+
+      # ============================================
+      # Alerte 2 : Mémoire haute
+      # ============================================
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Memory usage above 85% on {{ $labels.instance }}"
+          description: |
+            The node {{ $labels.instance }} is using more than 85% of its memory.
+            Current usage: {{ $value | printf "%.1f" }}%
+
+            Check for memory leaks or consider scaling.
+          value: "{{ $value | printf \"%.1f\" }}%"
+
+      # ============================================
+      # Alerte 3 : CPU haute
+      # ============================================
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU usage above 80% on {{ $labels.instance }}"
+          description: |
+            The node {{ $labels.instance }} has been using more than 80% CPU
+            for the last 10 minutes.
+          value: "{{ $value | printf \"%.1f\" }}%"
+
+      # ============================================
+      # Alerte 4 : Disque bientôt plein
+      # ============================================
+      - alert: DiskSpaceLow
+        expr: |
+          (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes) < 0.10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk space below 10% on {{ $labels.instance }}:{{ $labels.mountpoint }}"
+          description: |
+            The filesystem {{ $labels.mountpoint }} on {{ $labels.instance }}
+            has less than 10% free space.
+
+            Consider cleaning up or expanding the disk.
+
+<Aside type="note" title="Filtre fstype">
+
+Le filtre `fstype!~"tmpfs|overlay"` exclut les filesystems virtuels. Sur Minikube ou Docker Desktop, vous pourriez avoir d'autres types de FS. Ajustez selon votre environnement.
+
+</Aside>
