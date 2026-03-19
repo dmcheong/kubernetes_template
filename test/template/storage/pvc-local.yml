@@ -1,11 +1,17 @@
+# pvc-local.yml — PersistentVolumeClaim pour environnement de développement local
+# Utilise la StorageClass "standard" de Minikube (provisionnement automatique local)
+# Remplace le PVC NFS pour les labs sans serveur NFS dédié
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-local
+  name: pvc-local      # référencé dans deployment-nfs.yml
   namespace: dev
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce    # un seul nœud peut monter ce volume en lecture-écriture
+                       # (RWX requis pour NFS multi-nœuds — voir pvc-nfs.yml)
   resources:
     requests:
-      storage: 1Gi
+      storage: 1Gi     # taille demandée au provisioner
+  # StorageClass non spécifiée → utilise la classe par défaut de Minikube ("standard")

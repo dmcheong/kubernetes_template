@@ -1,18 +1,26 @@
+# service-monitor.yml — ServiceMonitor Prometheus Operator pour demo-api
+# CRD fourni par kube-prometheus-stack (monitoring.coreos.com)
+# Indique à Prometheus comment scraper un service applicatif
+
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: demo-api-monitor
   namespace: monitoring
   labels:
+    # ce label doit correspondre au serviceMonitorSelector de la CR Prometheus
     release: prometheus
 spec:
+  # sélectionne les Services avec le label app: demo-api
   selector:
     matchLabels:
       app: demo-api
+  # namespaces scrutés pour trouver les services correspondants
   namespaceSelector:
     matchNames:
       - default
+  # configuration du scraping
   endpoints:
-    - port: http
-      path: /metrics
-      interval: 15s
+    - port: http          # nom du port dans le Service (spec.ports[].name)
+      path: /metrics      # chemin de l'endpoint métriques
+      interval: 15s       # fréquence de collecte

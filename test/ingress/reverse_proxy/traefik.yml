@@ -1,21 +1,31 @@
+# traefik.yml — Helm values pour Traefik ingress controller
+# Référence : https://github.com/traefik/traefik-helm-chart
+
+# nombre de réplicas du pod Traefik
 deployment:
   replicas: 1
 
+# IngressClass : permet d'avoir plusieurs controllers d'ingress dans le même cluster
+# isDefaultClass: false → Traefik ne capture pas les Ingress sans annotation explicite
 ingressClass:
   enabled: true
   isDefaultClass: false
   name: traefik
 
+# Activation des providers Kubernetes
 providers:
+  # CRD Traefik : IngressRoute, Middleware, etc.
   kubernetesCRD:
     enabled: true
+  # support des ressources Ingress Kubernetes standard
   kubernetesIngress:
     enabled: true
 
+# Ports exposés par Traefik
 ports:
   web:
-    port: 8000
-    exposedPort: 80
+    port: 8000           # port interne du container
+    exposedPort: 80      # port exposé par le Service
     expose:
       default: true
   websecure:
@@ -24,32 +34,38 @@ ports:
     expose:
       default: true
   traefik:
-    port: 9000
+    port: 9000           # dashboard Traefik (non exposé externalement)
     expose:
       default: false
   metrics:
-    port: 9100
+    port: 9100           # endpoint /metrics pour Prometheus (non exposé externalement)
     expose:
       default: false
 
+# Type de Service : LoadBalancer expose Traefik via une IP externe (Minikube: NodePort)
 service:
   type: LoadBalancer
 
+# API et dashboard Traefik
+# insecure: false → dashboard accessible uniquement via port-forward en dev
 api:
   dashboard: true
   insecure: false
 
+# Niveau de log général (INFO, DEBUG, WARN, ERROR)
 logs:
   general:
     level: INFO
 
+# Métriques : export vers Prometheus
 metrics:
   prometheus:
     enabled: true
-    addEntryPointsLabels: true
-    addRoutersLabels: true
-    addServicesLabels: true
-    entryPoint: metrics
+    addEntryPointsLabels: true   # métriques par entrypoint (web, websecure)
+    addRoutersLabels: true       # métriques par routeur
+    addServicesLabels: true      # métriques par service backend
+    entryPoint: metrics          # entrypoint dédié aux métriques (port 9100)
+  # export OTLP vers l'OpenTelemetry Collector déployé dans monitoring
   otlp:
     enabled: true
     serviceName: traefik
@@ -57,6 +73,7 @@ metrics:
       enabled: true
       endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/metrics"
 
+# Traces distribuées OTLP
 tracing:
   otlp:
     enabled: true
@@ -64,9 +81,11 @@ tracing:
       enabled: true
       endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces"
 
+# ServiceMonitor : permet à kube-prometheus-stack de découvrir automatiquement Traefik
 serviceMonitor:
   enabled: true
-  namespace: monitoring
+  namespace: monitoring  # doit correspondre au namespace de Prometheus
 
+# Arguments supplémentaires passés au binaire Traefik
 additionalArguments:
-  - "--ping=true"
+  - "--ping=true"        # active l'endpoint /ping pour les health checks

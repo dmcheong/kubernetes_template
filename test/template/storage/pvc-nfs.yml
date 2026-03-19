@@ -1,12 +1,17 @@
+# pvc-nfs.yml — PersistentVolumeClaim NFS via StorageClass standard
+# Utilise la StorageClass "standard" de Minikube pour simuler NFS en dev
+# Pour un vrai serveur NFS : utiliser pvc-nfs-old.yml avec storageClassName: nfs-csi
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-nfs   # tu peux garder le nom pour éviter de modifier le Deployment
+  name: pvc-nfs    # nom utilisé dans les manifestes Deployment pour la référencer
   namespace: dev
 spec:
-  storageClassName: standard
+  storageClassName: standard   # StorageClass Minikube (provisionnement local)
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce             # RWO : un seul nœud (suffisant pour Minikube mono-nœud)
+                                # RWX recommandé avec un vrai serveur NFS multi-nœuds
   resources:
     requests:
-      storage: 100Mi
+      storage: 100Mi            # petite taille pour les tests

@@ -1,11 +1,15 @@
+# pod-nginx.yml — Pod nginx de test dans le namespace dev
+# Crée un Pod unique (non géré par un Deployment / ReplicaSet)
+# Usage pédagogique uniquement — en production préférer un Deployment
+
 apiVersion: v1
 kind: Pod
 metadata:
-  name: mon-pod
+  name: mon-pod       # nom unique du Pod dans le namespace dev
   namespace: dev
 spec:
   containers:
     - name: nginx
-      image: nginx
+      image: nginx    # image officielle nginx (dernière version stable)
       ports:
-        - containerPort: 80
+        - containerPort: 80   # port HTTP exposé par nginx

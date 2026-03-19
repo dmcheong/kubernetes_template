@@ -1,12 +1,22 @@
+# kong-values.yml — Helm values pour Kong Gateway
+# Se connecte au PostgreSQL installé séparément (bitnami/postgresql)
+# IMPORTANT : postgresql.enabled est désactivé car on gère PostgreSQL
+#             via un chart Helm indépendant (kong-postgresql)
+
 env:
-  pg_user: kong
-  pg_database: kong
-  pg_host: kong-postgresql-postgresql
+  # connexion à PostgreSQL
+  pg_user: kong                         # utilisateur créé dans postgres-values.yml
+  pg_database: kong                     # base de données Kong
+  pg_host: kong-postgresql-postgresql   # nom DNS du Service PostgreSQL dans le cluster
   pg_password:
+    # injection sécurisée du mot de passe depuis le Secret Kubernetes
+    # (créé via kong-gateway-secret.yaml ou kong-gateway-sealed-secret.yaml)
     valueFrom:
       secretKeyRef:
         name: kong-ingress-controller-postgresql
         key: postgresql-password
 
+# désactivation du chart PostgreSQL intégré à Kong
+# on utilise la release kong-postgresql installée séparément
 postgresql:
-  enabled: false  # IMPORTANT : on n’installe pas PostgreSQL via le chart Kong
+  enabled: false

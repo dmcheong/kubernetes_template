@@ -1,9 +1,13 @@
+# deployment-nfs.yml — Deployment nginx utilisant un volume persistant (PVC)
+# Démontre la persistance de données via un PersistentVolumeClaim
+# Les fichiers servis par nginx sont stockés dans le volume monté
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nfs-deployment
+  name: nfs-deployment    # nom du Deployment (pas lié au nom du PVC)
 spec:
-  replicas: 2
+  replicas: 2             # 2 réplicas montant le même volume (ReadWriteOnce limité à 1 nœud)
   selector:
     matchLabels:
       app: nfs-app
@@ -17,8 +21,8 @@ spec:
           image: nginx
           volumeMounts:
             - name: storage
-              mountPath: /usr/share/nginx/html
+              mountPath: /usr/share/nginx/html   # les fichiers HTML servis par nginx
       volumes:
         - name: storage
           persistentVolumeClaim:
-            claimName: pvc-local
+            claimName: pvc-local    # PVC créé par script_test_storageclass.sh

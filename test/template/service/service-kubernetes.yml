@@ -1,13 +1,17 @@
+# service-kubernetes.yml — Service nginx avec port de métriques Prometheus
+# Expose le port 8080 (métriques) en plus du port HTTP standard
+# Référencé par service-monitor.yml pour le scraping automatique
+
 apiVersion: v1
 kind: Service
 metadata:
   name: nginx
   labels:
-    app: nginx
+    app: nginx    # label utilisé par le ServiceMonitor pour sélectionner ce service
 spec:
   selector:
-    app: nginx
+    app: nginx    # cible les Pods avec label app: nginx
   ports:
-    - name: metrics
+    - name: metrics      # nom du port (référencé dans service-monitor.yml)
       port: 8080
-      targetPort: 8080
+      targetPort: 8080   # nginx doit exposer /metrics sur ce port

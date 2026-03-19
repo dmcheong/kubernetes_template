@@ -1,16 +1,23 @@
+# prometheus-minimal.yml — Règles d'alerte minimales pour Prometheus
+# Helm values pour kube-prometheus-stack : section serverFiles
+# Contient 2 groupes : infrastructure et otel-demo-application
+
 serverFiles:
   alerting_rules.yml:
     groups:
+      # ── Groupe : infrastructure ──────────────────────────────────────────
       - name: infrastructure
         rules:
+          # Alerte : un target Prometheus ne répond plus pendant 2 minutes
           - alert: TargetDown
-            expr: up == 0
-            for: 2m
+            expr: up == 0           # up=0 signifie que le scrape a échoué
+            for: 2m                 # délai avant bascule en état "firing"
             labels:
               severity: critical
             annotations:
               summary: "Target {{ $labels.job }}/{{ $labels.instance }} is down"
 
+          # Alerte : utilisation mémoire > 85% pendant 5 minutes
           - alert: HighMemoryUsage
             expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
             for: 5m
@@ -19,8 +26,10 @@ serverFiles:
             annotations:
               summary: "Memory usage above 85% on {{ $labels.instance }}"
 
+      # ── Groupe : otel-demo-application ───────────────────────────────────
       - name: otel-demo-application
         rules:
+          # Alerte : le collecteur OpenTelemetry n'est plus scraped
           - alert: OtelCollectorDown
             expr: up{job="otel-collector"} == 0
             for: 2m

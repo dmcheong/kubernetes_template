@@ -1,20 +1,25 @@
+# nginx-replicaset.yml — ReplicaSet nginx dans le namespace dev
+# Garantit que 3 Pods nginx sont toujours actifs
+# Note : en production, utiliser un Deployment (qui gère les ReplicaSets)
+#        pour bénéficier des rolling updates et des rollbacks automatiques
+
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: nginx-replicaset
   namespace: dev
 spec:
-  replicas: 3
+  replicas: 3              # nombre de Pods maintenus en permanence
   selector:
     matchLabels:
-      app: nginx
+      app: nginx           # le ReplicaSet gère tous les Pods avec ce label
   template:
     metadata:
       labels:
-        app: nginx
+        app: nginx         # label appliqué à chaque Pod créé par ce ReplicaSet
     spec:
       containers:
       - name: nginx
-        image: nginx:latest
+        image: nginx:latest    # ⚠ fixer la version en production
         ports:
         - containerPort: 80
