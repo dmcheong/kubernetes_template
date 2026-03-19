@@ -1,19 +1,27 @@
+# prometheus-values.yml — Helm values pour Prometheus Adapter
+# Expose des métriques custom (http_requests_per_second) via l'API Kubernetes
+# Utilisé par le HorizontalPodAutoscaler (hpa.yml)
+
+# connexion Prometheus (URL interne au cluster)
 prometheus:
   url: http://prometheus-operated.monitoring.svc
   port: 9090
 
 rules:
-  default: false
+  default: false    # désactiver les règles par défaut pour éviter les conflits
   custom:
     - seriesQuery: 'http_requests_total{namespace!="",pod!=""}'
+      # mappage des labels PromQL vers des ressources Kubernetes (namespace, pod)
       resources:
         overrides:
           namespace:
             resource: "namespace"
           pod:
             resource: "pod"
+      # renommage : http_requests_total → http_requests_per_second
       name:
         matches: "^(.*)_total$"
         as: "${1}_per_second"
+      # calcul du taux de requêtes sur 2 minutes pour chaque pod
       metricsQuery: >
         sum(rate(http_requests_total{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)

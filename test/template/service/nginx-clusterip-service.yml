@@ -1,11 +1,17 @@
+# nginx-clusterip-service.yml — Service ClusterIP pour nginx
+# Expose les Pods nginx sur une IP fixe interne au cluster
+# Inaccessible depuis l'extérieur — communication inter-services uniquement
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-clusterip-service
+  name: nginx-clusterip-service   # nom DNS interne : nginx-clusterip-service.<namespace>
 spec:
+  # sélectionne tous les Pods avec le label app: nginx
   selector:
     app: nginx
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 80        # port exposé par le Service (côté client)
+      targetPort: 80  # port du container nginx (doit correspondre à containerPort)
+  # type: ClusterIP est le défaut — pas nécessaire de l'indiquer explicitement

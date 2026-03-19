@@ -1,11 +1,17 @@
+# pod-alpine.yml — Pod alpine de test dans le namespace dev
+# Alpine est une image Linux légère (~5 Mo) souvent utilisée pour les tests
+# Note : sans commande de maintien en vie, ce Pod se termine immédiatement
+#        et entre en CrashLoopBackOff — comportement normal en test
+
 apiVersion: v1
 kind: Pod
 metadata:
-  name: mon-pod-alpine
+  name: mon-pod-alpine   # nom unique du Pod dans le namespace dev
   namespace: dev
 spec:
   containers:
     - name: alpine
-      image: alpine
+      image: alpine      # image Linux minimaliste (base BusyBox + APK)
       ports:
         - containerPort: 80
+      # pour maintenir le pod en vie : ajouter command: ["sleep", "3600"]

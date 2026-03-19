@@ -1,63 +1,56 @@
-#!usr/bin/env bash
-# services get deployment app in cluster
-# set network beetween Pods and expose stable and secure app
+#!/usr/bin/env bash
+#===============================================================================
+# Fichier      : manual_test_services.sh
+# Description  : Guide de formation sur les Services Kubernetes (ClusterIP, NodePort).
+#                Fichier non utilisé pour l'automatisation — entraînement manuel.
+#===============================================================================
 
-# need deployment step
-# get deployment list
+#─────────────────────────────────────────────────────────────────────────────
+# Vérification des prérequis
+# Un Service nécessite un Deployment actif pour avoir des Pods à cibler
+#─────────────────────────────────────────────────────────────────────────────
 kubectl get deployment.app
-
-# get pods in relationship
 kubectl get pods -o wide
 
-# if deployment not set
-# kubectl apply-f ./../template/deployment/nginx-deployment.yml
-
+# si le deployment n'est pas encore créé :
+# kubectl apply -f ./../template/deployment/nginx-deployment.yml
 
 ##
-# create cluster service clusterip
-# Par défaut, un Pod a une IP interne éphémère, ce qui empêche d’autres Pods d’y accéder de manière stable.
-# Un Service de type ClusterIP permet d’attribuer une IP fixe pour rendre l’application accessible aux autres Pods du cluster.
-
-# set service
+#─────────────────────────────────────────────────────────────────────────────
+# Service ClusterIP
+# Par défaut, un Pod a une IP interne éphémère : elle change à chaque redémarrage.
+# Le Service ClusterIP attribue une IP stable pour les autres Pods du cluster.
+# Route le trafic vers les Pods correspondant au selector (app=nginx)
+#─────────────────────────────────────────────────────────────────────────────
 kubectl apply -f ./../template/service/nginx-clusterip-service.yml
-
-# get services
 kubectl get services
 
-
-## 
-# case test services access
-
-# create temporary pods
+##
+#─────────────────────────────────────────────────────────────────────────────
+# Test de connectivité interne (accès service depuis un autre Pod)
+#─────────────────────────────────────────────────────────────────────────────
+# créer un pod temporaire pour simuler un client interne
 kubectl run test-pod --image=busybox --restart=Never -- sleep 3600
 
-# open terminal pod
+# entrer dans le pod temporaire
 kubectl exec -it test-pod -- sh
 
-# test nginx connexion by service
-wget -qO- http://nginx-clusterip-service
-# get reponse like ../template/nginx-clusterip-service
+# depuis le shell du pod :
+wget -qO- http://nginx-clusterip-service     # → réponse nginx
+# réponse attendue : page HTML nginx (voir template nginx-clusterip-service.yml)
 
-# delete temporary/test pod
+# supprimer les ressources de test
 kubectl delete pod test-pod
-
-# delete clusterip
 kubectl delete -f ./../template/service/nginx-clusterip-service.yml
 
-
 ##
-# expose outside cluster (NodePort)
-
-# set service
+#─────────────────────────────────────────────────────────────────────────────
+# Service NodePort
+# Rend l'application accessible depuis l'extérieur du cluster via
+# le port 30007 ouvert sur chaque nœud (plage 30000–32767)
+#─────────────────────────────────────────────────────────────────────────────
 kubectl apply -f ./../template/service/nginx-nodeport-service.yml
-
-# get node ip
 kubectl get nodes -o wide
 
-# test access app
+# tester l'accès externe
 curl http://<IP_NODE>:30007
-
-
-##
-# score
-kube-score score ./../template/service/nginx-nodeport-service.yml
