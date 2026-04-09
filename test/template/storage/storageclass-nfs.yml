@@ -1,11 +1,17 @@
+# storageclass-nfs.yml — StorageClass pour provisionnement dynamique NFS
+# Utilise le driver CSI nfs.csi.k8s.io (doit être installé séparément)
+# Référence : https://github.com/kubernetes-csi/csi-driver-nfs
+
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: nfs-csi
-provisioner: nfs.csi.k8s.io
+  name: nfs-csi              # nom référencé dans les PVC (storageClassName)
+provisioner: nfs.csi.k8s.io  # driver CSI NFS — doit être présent dans le cluster
 parameters:
-  server: 192.168.49.2  # Remplacez par l'adresse IP de votre serveur NFS
-  share: /data
-reclaimPolicy: Retain
-volumeBindingMode: Immediate
-allowVolumeExpansion: true
+  server: 192.168.49.2        # ⚙ adresse IP du serveur NFS (adapter à l'environnement)
+                              #   sur Minikube : minikube ip
+  share: /data                # répertoire exporté sur le serveur NFS
+reclaimPolicy: Retain         # Retain → le PV subsiste après suppression du PVC
+                              # Delete → supprime automatiquement le PV (dangereux en prod)
+volumeBindingMode: Immediate  # le PV est provisionné dès la création du PVC
+allowVolumeExpansion: true    # permet d'agrandir le volume sans recréer le PVC

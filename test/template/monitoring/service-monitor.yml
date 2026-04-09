@@ -1,17 +1,22 @@
+# service-monitor.yml — ServiceMonitor pour nginx dans le namespace dev
+# Permet à kube-prometheus-stack de scraper les métriques nginx (port 8080)
+# Le label release doit correspondre à la release Helm de kube-prometheus-stack
+
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: nginx
   labels:
-    release: kube-prometheus-stack   # important: doit matcher la config de ton Prometheus
+    # IMPORTANT : doit correspondre au serviceMonitorSelector configuré dans kube-prometheus-stack
+    release: kube-prometheus-stack
 spec:
   selector:
     matchLabels:
-      app: nginx
+      app: nginx             # cible les Services avec label app: nginx
   namespaceSelector:
     matchNames:
-      - dev   # ou le namespace où est ton service
+      - dev                  # observe les Services dans le namespace dev
   endpoints:
-    - port: metrics
+    - port: metrics          # nom du port dans le Service (spec.ports[].name: metrics)
       path: /metrics
-      interval: 15s
+      interval: 15s          # collecte toutes les 15 secondes

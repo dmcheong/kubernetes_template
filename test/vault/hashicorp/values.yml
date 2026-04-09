@@ -1,0 +1,15 @@
+server:
+  affinity: ""
+  ha:
+    enabled: true
+    raft:
+      enabled: true
+injector:
+  enabled: false
+csi:
+  enabled: true
+ui:
+  enabled: true
+  serviceType: "LoadBalancer"
+  serviceNodePort: null
+  externalPort: 8200

@@ -1,11 +1,16 @@
+# pvc-nfs-old.yml — PVC NFS avec le provisionneur CSI nfs.csi.k8s.io
+# Nécessite un serveur NFS réel et le driver CSI NFS installé dans le cluster
+# Remplacé par pvc-nfs.yml pour les environnements de lab sans NFS dédié
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-nfs
+  name: pvc-nfs          # peut remplacer pvc-local sans modifier le Deployment
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteMany        # RWX : plusieurs nœuds peuvent accéder au volume simultanément
+                           # (caractéristique principale du stockage NFS)
   resources:
     requests:
       storage: 2Gi
-  storageClassName: nfs-csi
+  storageClassName: nfs-csi  # StorageClass définie dans storageclass-nfs.yml

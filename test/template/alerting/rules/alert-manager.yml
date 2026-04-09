@@ -1,22 +1,29 @@
+# alert-manager.yml — Helm values pour AlertManager (kube-prometheus-stack)
+# Configure AlertManager pour persister les alertes et les router vers un webhook
+# ⚠ Remplacer VOTRE-UUID par un vrai UUID webhook.site pour les tests
+
 alertmanager:
   enabled: true
   persistentVolume:
     enabled: true
-    size: 2Gi
+    size: 2Gi    # volume de persistance pour les silences et les états d'alerte
 
   config:
     global:
-      resolve_timeout: 5m
+      resolve_timeout: 5m    # délai avant qu'une alerte résolue soit fermée
 
+    # arbre de routage des alertes
     route:
-      receiver: 'default'
-      group_by: ['alertname', 'severity']
-      group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 4h
+      receiver: 'default'                    # récepteur par défaut (toutes les alertes)
+      group_by: ['alertname', 'severity']    # regrouper les alertes similaires
+      group_wait: 30s                        # attente avant d'envoyer le premier groupe
+      group_interval: 5m                     # intervalle entre notifications d'un groupe actif
+      repeat_interval: 4h                    # délai avant de renvoyer une alerte déjà notifiée
 
     receivers:
       - name: 'default'
         webhook_configs:
+          # ⚙ remplacer par une vraie URL webhook pour les tests
+          # Obtenir une URL temporaire sur http://webhook.site
           - url: 'https://webhook.site/VOTRE-UUID'
-            send_resolved: true
+            send_resolved: true    # notifier aussi quand l'alerte se résout

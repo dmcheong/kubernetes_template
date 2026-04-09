@@ -1,10 +1,16 @@
-auth:
-  username: kong
-  database: kong
-  existingSecret: kong-ingress-controller-postgresql
-  secretKeys:
-    userPasswordKey: postgresql-password
+# postgres-values.yml — Helm values pour PostgreSQL (bitnami/postgresql)
+# Instance PostgreSQL dédiée à Kong Gateway
+# Les credentials sont injectés depuis un Secret Kubernetes existant
 
+auth:
+  username: kong                                     # utilisateur de la base Kong
+  database: kong                                     # base de données à créer
+  existingSecret: kong-ingress-controller-postgresql # Secret contenant le mot de passe
+  secretKeys:
+    adminPasswordKey: password                       # clé dans le Secret
+    username: username
+
+# service PostgreSQL exposé sur le port standard 5432
 primary:
   service:
     port: 5432
