@@ -28,3 +28,5 @@ kubectl apply -f "$MONT_DIR/../template/service/service-kubernetes.yml"
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Création du service monitoring:"
 kubectl apply -f "$MONT_DIR/../template/service/service-monitor.yml"
+
+printf "%b\n"

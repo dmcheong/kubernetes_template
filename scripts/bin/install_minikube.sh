@@ -35,6 +35,7 @@ function version_lt()
 function start_minikube()
 {
   set_message "info" "0" "Démarrage de Minikube"
+  set_message "EdWMessage" "0" "Commenter cette fonction pour la production."
   minikube start --driver=docker
   printf "%b\n"
 }

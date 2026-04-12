@@ -59,18 +59,18 @@ function helm_version()
 }
 
 
-set_message "check" "0" "Vérification de l'installation du service Helm"
+set_message "check" "0" "Vérification de l installation du service Helm"
 command -v helm > /dev/null 2>&1
 
 if [[ ! ${?} == "0" ]]
   then
     set_message "EdWMessage" "0" "Helm absent - installation de la dernière version stable"
     install_helm
-    set_message "check" "0" "Vérification de l'installation du service Helm"
+    set_message "check" "0" "Vérification de l installation du service Helm"
     command -v helm > /dev/null 2>&1
     if [[ ! ${?} == "0" ]]
       then
-        set_message "EdEMessage" "5" "Echec de l'installation de Helm"
+        set_message "EdEMessage" "5" "Echec de l installation de Helm"
       else
         set_message "EdSMessage" "0" "Helm installé avec succès"
     fi

@@ -22,7 +22,7 @@ if [[ -f "${global_configuration_file}" ]] then
 fi
 
 if [[ ${core_functions_loaded} -ne 1 ]] then
-    . "${root_path}/lib/core.sh"
+    . "${root_path}/kubernetes_template/scripts/lib/core.sh"
 fi
 
 set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d un environnement kubernetes."
@@ -31,12 +31,12 @@ set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d
 # Phase 1 : vérification et installation des outils de base
 #   → Docker, Helm, kubectl, Minikube, asdf, kube-score, kubeseal
 #─────────────────────────────────────────────────────────────────────────────
-# source ./scripts/bin/check_installation_basique_tools.sh
+source ./scripts/bin/check_installation_basique_tools.sh
 
 # démarrage du cluster Minikube (commenter en production)
 # set_message "info" "0" "Démarrage de Minikube."
 # minikube start
-# printf "%b\n"
+printf "%b\n"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Phase 2 : déploiement du cluster de test
@@ -44,6 +44,7 @@ set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d
 #                    → storage → secrets → gateway
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Exécution global des scripts de déploiement du cluster:"
+printf "%b\n"
 
 # création des namespaces (dev, …)
 source ./test/namespaces/script_test_namespaces.sh
@@ -113,6 +114,11 @@ printf "%b\n"
 # arrêt de Minikube (décommenter si nécessaire)
 # set_message "info" "0" "Arrêt de Minikube."
 # minikube stop
+# printf "%b\n"
+
+# suppression de l image minikube (décommenter si nécessaire)
+# set_message "info" "0" "Suppression de l'image Minikube pour le test entier du script"
+# minikube delete
 # printf "%b\n"
 
 set_message "EdSMessage" "0" "Fin du script d automatisation."

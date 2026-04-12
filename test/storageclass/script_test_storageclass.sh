@@ -50,3 +50,5 @@ set_message "check" "0" "Listes des pods:"
 kubectl get pods
 
 set_message "info" "0" "La persistance du volume via un serveur NFS est mis en place."
+
+printf "%b\n"

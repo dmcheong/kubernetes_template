@@ -41,7 +41,7 @@ function install_asdf()
   wget -q "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_TARGET_VERSION}/asdf-v${ASDF_TARGET_VERSION}-linux-amd64.tar.gz"
   error_CTRL "${?}" ""
 
-  set_message "check" "0" "extraction de l'archive asdf vers ${LOCAL_BIN}"
+  set_message "check" "0" "extraction de l archive asdf vers ${LOCAL_BIN}"
   tar -xzf "asdf-v${ASDF_TARGET_VERSION}-linux-amd64.tar.gz" -C "${LOCAL_BIN}"
   error_CTRL "${?}" ""
 
@@ -49,7 +49,7 @@ function install_asdf()
   chmod +x "${LOCAL_BIN}/asdf"
   error_CTRL "${?}" ""
 
-  set_message "check" "0" "nettoyage de l'archive asdf"
+  set_message "check" "0" "nettoyage de l archive asdf"
   rm -f "asdf-v${ASDF_TARGET_VERSION}-linux-amd64.tar.gz"
   error_CTRL "${?}" ""
 }
@@ -67,7 +67,7 @@ function asdf_version()
       version_lt "${CURRENT_ASDF_VERSION}" "${ASDF_MIN_VERSION}"
       if [[ ${?} -eq 0 ]]
         then
-          set_message "EdWMessage" "0" "asdf n'est pas à jour (actuelle: ${CURRENT_ASDF_VERSION}, min: ${ASDF_MIN_VERSION}) - mise à jour"
+          set_message "EdWMessage" "0" "asdf n est pas à jour (actuelle: ${CURRENT_ASDF_VERSION}, min: ${ASDF_MIN_VERSION}) - mise à jour"
           install_asdf
         else
           set_message "EdSMessage" "0" "asdf à jour (actuelle: ${CURRENT_ASDF_VERSION}, min: ${ASDF_MIN_VERSION})"
@@ -76,18 +76,18 @@ function asdf_version()
 }
 
 
-set_message "check" "0" "Vérification de l'installation de l'outil asdf"
+set_message "check" "0" "Vérification de l installation de l outil asdf"
 command -v asdf > /dev/null 2>&1
 
 if [[ ! ${?} == "0" ]]
   then
     set_message "EdWMessage" "0" "asdf absent - installation de la version ${ASDF_TARGET_VERSION}"
     install_asdf
-    set_message "check" "0" "Vérification de l'installation de l'outil asdf"
+    set_message "check" "0" "Vérification de l installation de l'outil asdf"
     command -v asdf > /dev/null 2>&1
     if [[ ! ${?} == "0" ]]
       then
-        set_message "EdEMessage" "5" "Echec de l'installation de asdf"
+        set_message "EdEMessage" "5" "Echec de l installation de asdf"
       else
         set_message "EdSMessage" "0" "asdf installé avec succès"
     fi

@@ -22,7 +22,7 @@ add_repo_if_missing() {
     set_message "info" "0" "Ajout du repo $name"
     helm repo add "$name" "$url"
   else
-    set_message "debug" "0" "Repo $name déjà présent"
+    set_message "EdWMessage" "0" "Repo $name déjà présent"
   fi
 }
 
@@ -41,7 +41,8 @@ kubectl create namespace kong
 # Secret PostgreSQL (en clair — dev uniquement)
 # En production : utiliser SealedSecrets (voir ci-dessous)
 #─────────────────────────────────────────────────────────────────────────────
-set_message "info" "0" "Création d un secret pour postgresql; ne pas mettre les indications en production via le code:"
+set_message "info" "0" "Création d un secret pour postgresql"
+set_message "EdWMessage" "0" "Ne pas mettre la gestion des secrets en production via le code (ici exemple):"
 
 # calcul du chemin absolu pour être indépendant du répertoire courant
 GATE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -101,3 +102,5 @@ kubectl get all -n kong
 #
 # Requête SQL directe dans le pod PostgreSQL :
 #   kubectl exec -it kong-postgresql-0 -- psql -U kong -d kong -c "SELECT now();"
+
+printf "%b\n"

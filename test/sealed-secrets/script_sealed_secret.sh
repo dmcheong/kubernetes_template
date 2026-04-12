@@ -76,7 +76,8 @@ set_message "check" "0" "Vérifier que le sealedsecret a été créer:"
 kubectl get sealedsecrets -n dev
 
 # vérifier que le Secret a bien été déchiffré et créé par le controller
-set_message "EdEMessage" "0" "Ne pas afficher les spécificités des secret dans code en production. Ceci est pour l'entrainement."
+set_message "EdWMessage" "0" "Ne pas afficher les spécificités des secret dans code en production. Ceci est pour l'entrainement."
 set_message "check" "0" "Vérifier que Kubernetes a généré un Secret standard:"
 kubectl get secret monsecret -o jsonpath="{.data.password}" | base64 --decode
+
 printf "%b\n"

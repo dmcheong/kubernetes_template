@@ -117,3 +117,14 @@ rm -rf ~/.asdf
 - `kong-gateway-secret.yaml` contient un mot de passe fictif (`motdepassefort`) — **ne pas pousser en production sans chiffrement SealedSecrets**.
 - `my-secrets.yaml` contient des valeurs base64 d'exemple — à remplacer ou chiffrer avec `kubeseal`.
 - Le partage NFS est configuré avec `no_root_squash` et permissions `777` — **environnement de développement uniquement**.
+
+
+## Intégration partiel du Framework CAST
+
+- CAST est un framework BASH de ARNAUD CRAMPET
+- Intégration de la partie sur l'affichage des logs dans le terminal
+
+```
+lib
+└── core.sh`
+```

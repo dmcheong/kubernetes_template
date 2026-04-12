@@ -132,6 +132,7 @@ function set_message()
 		if [[ ${_message_level} -eq 0 ]]
         then
   		    echo -en "[${_BLUE}CHECK${_NC}]\t${_timestamp} - ${_message_content}"
+			printf "%b\n"
   		else
 	  		echo -en "[${_CYAN}CHECK${_NC}]\t${_timestamp} - ${_message_content}" >>${log_file}
 		fi

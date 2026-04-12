@@ -46,3 +46,5 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Application des règles pour l autoscaling horizentale."
 kubectl apply -f "$SCRIPT_DIR/../../template/alerting/rules/hpa.yml"
+
+printf "%b\n"

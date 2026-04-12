@@ -35,3 +35,5 @@ kubectl get services -n monitoring
 echo "==> Pour ouvrir le tableau de bord pour prometheux-alertmanager:"
 kubectl port-forward svc/prometheus-alertmanager 9093:9093 -n monitoring
 # puis ouvrir http://localhost:9093
+
+printf "%b\n"

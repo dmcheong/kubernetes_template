@@ -10,6 +10,9 @@
 set_message "info" "0" "Gestion des pods."
 printf "%b\n"
 
+# Utilisation du paramètre set_message "debug" "0" ""
+DEBUG_MODE="1"
+
 # chemin absolu pour référencer les templates indépendamment du répertoire courant
 POD_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -23,8 +26,8 @@ set_message "info" "0" "Application d un pod nginx:"
 kubectl apply -f "$POD_DIR/../template/pods/pod-nginx.yml"
 
 # attendre 30 secondes que le pod soit prêt (timeout court, ajuster si lent)
-set_message "debug" "0" "Temps d attente avec latence volontaire pour le pod pour éviter des erreurs sur la suite des commandes; 30s."
-kubectl wait --for=condition=Ready pod/mon-pod --timeout=30s
+set_message "debug" "0" "Temps d attente avec latence volontaire pour le pod pour éviter des erreurs sur la suite des commandes; 20s."
+kubectl wait --for=condition=Ready pod/mon-pod --timeout=20s
 
 set_message "info" "0" "Application d un pod alpine (default not running)"
 kubectl apply -f "$POD_DIR/../template/pods/pod-alpine.yml"
@@ -38,14 +41,14 @@ kubectl get pods
 #─────────────────────────────────────────────────────────────────────────────
 # Récupération des logs
 #─────────────────────────────────────────────────────────────────────────────
-set_message "info" "0" "==> Logs du pod: mon-pod:"
+set_message "debug" "0" "Logs du pod: mon-pod:"
 kubectl logs mon-pod
 
-set_message "info" "0" "==> Logs du pod: mon-pod-alpine:"
+set_message "debug" "0" "Logs du pod: mon-pod-alpine:"
 kubectl logs mon-pod-alpine
 
 # vérification dans le namespace dev
-set_message "check" "0" "==> Liste des pods dans l environnement namespaces -> dev:"
+set_message "check" "0" "Liste des pods dans l environnement namespaces -> dev:"
 kubectl get pods -n dev
 
 # commandes de nettoyage (décommenter si nécessaire) :
@@ -54,3 +57,5 @@ kubectl get pods -n dev
 # kubectl delete pod mon-pod-alpine
 # kubectl delete -f "$SCRIPT_DIR/../template/pods/pod-nginx.yml"
 # kubectl delete -f "$SCRIPT_DIR/../template/pods/pod-alpine.yml"
+
+printf "%b\n"

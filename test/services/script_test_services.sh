@@ -7,6 +7,9 @@
 set_message "info" "0" "Gestion des services"
 printf "%b\n"
 
+# Utilisation du paramètre set_message "debug" "0" ""
+DEBUG_MODE="1"
+
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification des prérequis : le Deployment nginx doit être actif
 #─────────────────────────────────────────────────────────────────────────────
@@ -96,3 +99,5 @@ minikube ssh -- curl -v http://127.0.0.1:30007
 # check with kube-score
 set_message "debug" "0" "Score du fichier.yml du service NodePort:"
 kube-score score "$SERV_DIR/../template/service/nginx-nodeport-service.yml"
+
+printf "%b\n"

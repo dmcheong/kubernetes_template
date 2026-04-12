@@ -44,7 +44,7 @@ if [[ ${?} -eq 0 ]] then
 fi
 
 # helm
-set_message "check" "0" "Chargement du script d'installation Helm"
+set_message "check" "0" "Chargement du script d installation Helm"
 source "${root_path}/bin/install_helm.sh"
 if [[ ${?} -eq 0 ]] then
     set_message "EdSMessage" "0" "Helm vérifié"
@@ -53,7 +53,7 @@ if [[ ${?} -eq 0 ]] then
 fi
 
 # kubectl
-set_message "check" "0" "Chargement du script d'installation kubectl"
+set_message "check" "0" "Chargement du script d installation kubectl"
 source "${root_path}/bin/install_kubectl.sh"
 if [[ ${?} -eq 0 ]] then
     set_message "EdSMessage" "0" "kubectl vérifié"
@@ -62,7 +62,7 @@ if [[ ${?} -eq 0 ]] then
 fi
 
 # Minikube
-set_message "check" "0" "Chargement du script d'installation Minikube"
+set_message "check" "0" "Chargement du script d installation Minikube"
 source "${root_path}/bin/install_minikube.sh"
 if [[ ${?} -eq 0 ]] then
     set_message "EdSMessage" "0" "Minikube vérifié"
@@ -71,7 +71,7 @@ if [[ ${?} -eq 0 ]] then
 fi
 
 # asdf
-set_message "check" "0" "Chargement du script d'installation asdf"
+set_message "check" "0" "Chargement du script d installation asdf"
 source "${root_path}/bin/install_asdf.sh"
 if [[ ${?} -eq 0 ]] then
     set_message "EdSMessage" "0" "asdf vérifié"
@@ -80,7 +80,7 @@ if [[ ${?} -eq 0 ]] then
 fi
 
 # kube-score
-set_message "check" "0" "Chargement du script d'installation kube-score"
+set_message "check" "0" "Chargement du script d installation kube-score"
 source "${root_path}/bin/install_kubescore.sh"
 if [[ ${?} -eq 0 ]] then
     set_message "EdSMessage" "0" "kube-score vérifié"
@@ -89,7 +89,7 @@ if [[ ${?} -eq 0 ]] then
 fi
 
 # kubeseal
-set_message "check" "0" "Chargement du script d'installation kubeseal NFS"
+set_message "check" "0" "Chargement du script d installation kubeseal NFS"
 source "${root_path}/bin/install_kubeseal.sh"
 if [[ ${?} -eq 0 ]] then
     set_message "EdSMessage" "0" "kubeseal NFS vérifié"
@@ -98,7 +98,7 @@ if [[ ${?} -eq 0 ]] then
 fi
 
 # sealedsecret
-set_message "check" "0" "Chargement du script d'installation Sealed Secrets"
+set_message "check" "0" "Chargement du script d installation Sealed Secrets"
 source "${root_path}/bin/install_sealedsecret.sh"
 if [[ ${?} -eq 0 ]] then
     set_message "EdSMessage" "0" "Sealed Secrets vérifié"
@@ -106,4 +106,6 @@ if [[ ${?} -eq 0 ]] then
     set_message "EdEMessage" "5" "Echec de la vérification Sealed Secrets"
 fi
 
+printf "%b\n"
 set_message "EdSMessage" "0" "Tous les outils de base sont vérifiés (helm, kubectl, minikube, asdf, kube-score, kubeseal, sealedsecret)"
+printf "%b\n"

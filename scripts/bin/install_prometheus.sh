@@ -34,7 +34,7 @@ function install_prometheus()
   if ! kubectl get namespace "${MONITORING_NAMESPACE}" >/dev/null 2>&1; then
     set_message "info" "0" "Création du namespace: ${MONITORING_NAMESPACE}"
     kubectl create namespace "${MONITORING_NAMESPACE}" >/dev/null
-    error_CTRL "${?}" ""
+    error_CTRL "${?}" "namespace crée avec succès: ${MONITORING_NAMESPACE}"
   else
     set_message "EdSMessage" "0" "Le namespace [${MONITORING_NAMESPACE}] est déjà présent"
   fi
@@ -44,7 +44,7 @@ function install_prometheus()
   if ! helm repo list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "${PROMETHEUS_REPO_NAME}"; then
     set_message "info" "0" "Ajout du repository Helm: ${PROMETHEUS_REPO_NAME}"
     helm repo add "${PROMETHEUS_REPO_NAME}" "${PROMETHEUS_REPO_URL}" >/dev/null
-    error_CTRL "${?}" ""
+    error_CTRL "${?}" "Le repository helm a été ajouté avec succès"
   else
     set_message "EdSMessage" "0" "Le repository Helm [${PROMETHEUS_REPO_NAME}] est déjà présent dans la liste"
   fi
@@ -52,7 +52,7 @@ function install_prometheus()
   # mise à jour des repositories Helm
   set_message "check" "0" "Mise à jour des repositories Helm"
   helm repo update >/dev/null
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Le repository helm a été mise à jour avec succès"
 
   # installation / upgrade (idempotent)
   set_message "check" "0" "Vérification de la release [${PROMETHEUS_RELEASE}] dans le namespace ${MONITORING_NAMESPACE}"
@@ -69,7 +69,7 @@ function install_prometheus()
     set_message "info" "0" "Déploiement via Helm des valeurs par défaut"
     helm upgrade --install "${PROMETHEUS_RELEASE}" "${PROMETHEUS_CHART}" -n "${MONITORING_NAMESPACE}" --wait
   fi
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Le déploiement via helm est un succès"
 
   set_message "info" "0" "Liste des Pods principaux dans [${MONITORING_NAMESPACE}]:"
   kubectl get pods -n "${MONITORING_NAMESPACE}" | grep -E 'prometheus|alertmanager|grafana|operator|node-exporter|kube-state-metrics' || true

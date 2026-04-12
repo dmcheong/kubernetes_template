@@ -10,6 +10,12 @@ TRAEF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_FILE="$TRAEF_DIR/whoami.yml"          # Deployment + Service whoami dans traefik
 ROUTE_FILE="$TRAEF_DIR/whoami-ingressroute.yml"  # IngressRoute CRD Traefik
 
+global_configuration_file="${root_path}/config/global.env"
+if [[ -f "${global_configuration_file}" ]]
+  then
+    . "${global_configuration_file}"
+fi
+
 #─────────────────────────────────────────────────────────────────────────────
 # Déploiement de l'application whoami et de son IngressRoute
 # whoami.yml crée :
@@ -19,24 +25,28 @@ ROUTE_FILE="$TRAEF_DIR/whoami-ingressroute.yml"  # IngressRoute CRD Traefik
 # whoami-ingressroute.yml crée :
 #   - IngressRoute CRD Traefik → route Host(`whoami.local`) vers le Service whoami
 #─────────────────────────────────────────────────────────────────────────────
-set_message "info" "0" "Déploiement de l'application de test de traefik pour le namespace traefik"
-kubectl apply -f "$APP_FILE" -n traefik
-kubectl apply -f "$ROUTE_FILE" -n traefik
+set_message "info" "0" "Déploiement de l'application de test de traefik pour le namespace ${TRAEFIK_NAMESPACE}"
+
+[ -f "$APP_FILE" ] || { echo "ERREUR: fichier introuvable: $APP_FILE"; exit 1; }
+[ -f "$ROUTE_FILE" ] || { echo "ERREUR: fichier introuvable: $ROUTE_FILE"; exit 1; }
+
+kubectl apply -f "${APP_FILE}"
+kubectl apply -f "${ROUTE_FILE}"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification des ressources déployées dans traefik
 #─────────────────────────────────────────────────────────────────────────────
 printf "%b\n"
-set_message "check" "0" "Vérification de l environnement namespace: traefik"
+set_message "check" "0" "Vérification des resouces relié à traefik dans l environnement namespace: dev"
 printf "%b\n"
-set_message "check" "0" "Liste des pods dans le namespace -> treafik"
-kubectl get pods -n traefik
+set_message "check" "0" "Vérification du pod whoami connecté à traefik dans le namespace -> dev"
+kubectl get pods -n dev | grep whoami
 
-set_message "check" "0" "Liste des services dans le namespace -> treafik"
-kubectl get svc -n traefik
+set_message "check" "0" "Vérification du service whoami connecté à traefik dans le namespace -> dev"
+kubectl get svc -n dev | grep whoami
 
-set_message "check" "0" "Liste des ingressroute dns le namespace -> traefik"
-kubectl get ingressroute -n traefik
+set_message "check" "0" "Vérification de l ingressroute whoami connecté à traefik dans le namespace -> dev"
+kubectl get ingressroute -n dev | grep whoami
 
 #─────────────────────────────────────────────────────────────────────────────
 # Instructions de test manuel
@@ -52,3 +62,5 @@ echo
 echo "3) Tester:"
 echo "   curl -H 'Host: whoami.local' http://<IP_OU_URL_TRAEFIK>"
 echo
+
+printf "%b\n"

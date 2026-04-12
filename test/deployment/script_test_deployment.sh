@@ -8,6 +8,9 @@
 set_message "info" "0" "Gestion des déploiements"
 printf "%b\n"
 
+# Utilisation du paramètre set_message "debug" "0" ""
+DEBUG_MODE="1"
+
 # chemin absolu pour référencer les templates indépendamment du répertoire courant
 DEPL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -41,3 +44,5 @@ kubectl get pods -l app=nginx
 #─────────────────────────────────────────────────────────────────────────────
 set_message "debug" "0" "Analyse du déploiement:"
 kube-score score "$DEPL_DIR/../template/deployment/nginx-deployment.yml"
+
+printf "%b\n"

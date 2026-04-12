@@ -4,9 +4,11 @@
 # Description  : Crée le namespace dev et le configure comme namespace par défaut.
 # Prérequis    : kubectl disponible, cluster Minikube démarré
 #===============================================================================
-
 set_message "info" "0" "Gestion des namespaces."
 printf "%b\n"
+
+# Utilisation du paramètre set_message "debug" "0" ""
+DEBUG_MODE="1"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vue d'ensemble des namespaces existants
@@ -50,9 +52,11 @@ kubectl config view --minify | grep namespace
 #─────────────────────────────────────────────────────────────────────────────
 # Suivi des événements du namespace (utile pour le debug)
 #─────────────────────────────────────────────────────────────────────────────
-set_message "info" "0" "==> Liste de tous les évènements de l environnement namespace -> dev"
+set_message "debug" "0" "Liste de tous les évènements de l environnement namespace -> dev"
 kubectl get events -n dev
 
 # suppression du namespace (décommenter si nécessaire) :
 # set_message "info" "0" "Suppression de l environnement namespace -> dev"
 # kubectl delete namespace dev
+
+printf "%b\n"
