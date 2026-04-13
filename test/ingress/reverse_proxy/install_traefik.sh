@@ -7,7 +7,7 @@
 # Note         : ce script n'est pas dans scripts/bin/ par choix pédagogique
 #===============================================================================
 TRAEF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BASIC_VALUES="$TRAEF_DIR/traefik.yml"
+TRAEF_VALUES_FILE="$TRAEF_DIR/traefik.yml"
 
 global_configuration_file="${root_path}/config/global.env"
 if [[ -f "${global_configuration_file}" ]]
@@ -57,8 +57,8 @@ else
 fi
 
 # déploiement avec le fichier de valeurs traefik.yml
-set_message "info" "0" "Déploiement de Traefik avec le fichier: ${BASIC_VALUES}"
-helm upgrade --install "${TRAEFIK_RELEASE}" "${TRAEFIK_CHART}" -n "${TRAEFIK_NAMESPACE}" -f "${BASIC_VALUES}"
+set_message "info" "0" "Déploiement de Traefik avec le fichier: ${TRAEF_VALUES_FILE}"
+helm upgrade --install "${TRAEFIK_RELEASE}" "${TRAEFIK_CHART}" -n "${TRAEFIK_NAMESPACE}" -f "${TRAEF_VALUES_FILE}"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification post-installation

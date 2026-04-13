@@ -79,6 +79,15 @@ if [[ ${?} -eq 0 ]] then
     set_message "EdEMessage" "5" "Echec de la vérification asdf"
 fi
 
+# jq
+set_message "check" "0" "Chargement du script d installation jq"
+source "${root_path}/bin/install_jq.sh"
+if [[ ${?} -eq 0 ]] then
+    set_message "EdSMessage" "0" "jq vérifié"
+  else
+    set_message "EdEMessage" "5" "Echec de la vérification jq"
+fi
+
 # kube-score
 set_message "check" "0" "Chargement du script d installation kube-score"
 source "${root_path}/bin/install_kubescore.sh"
@@ -107,5 +116,5 @@ if [[ ${?} -eq 0 ]] then
 fi
 
 printf "%b\n"
-set_message "EdSMessage" "0" "Tous les outils de base sont vérifiés (helm, kubectl, minikube, asdf, kube-score, kubeseal, sealedsecret)"
+set_message "EdSMessage" "0" "Tous les outils de base sont vérifiés (helm, kubectl, minikube, asdf, jq, kube-score, kubeseal, sealedsecret)"
 printf "%b\n"

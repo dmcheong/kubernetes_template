@@ -99,13 +99,29 @@ source ./test/ingress/reverse_proxy/install_traefik.sh
 # déploiement de l'application de test (whoami)
 source ./test/ingress/reverse_proxy/script_test_traefik_deploy.sh
 
+#─────────────────────────────────────────────────────────────────────────────
+# Phase 5 : vault — Hashicorp
+#─────────────────────────────────────────────────────────────────────────────
+set_message "info" "0" "Exécution des scripts de l environnement des vaults."
+
+set_message "info" "0" "Mise en place du vault Hashicorp:"
+
+# namespace hashicorp
+source ./test/namespaces/script_test_namespaces_hashicorp.sh
+
+# installation du vault Haashicorp via helm
+source ./test/vault/hashicorp/install_vault_hashicorp.sh
+
+# déploiement et configuration du vault
+source ./test/vault/hashicorp/script_test_vault_hashicorp.sh
+
+#─────────────────────────────────────────────────────────────────────────────
+# Phase 6 (optionnelle) : nettoyage
+#─────────────────────────────────────────────────────────────────────────────
 printf "%b\n"
 set_message "info" "0" "Fin global des scripts de déploiement."
 printf "%b\n"
 
-#─────────────────────────────────────────────────────────────────────────────
-# Phase 5 (optionnelle) : nettoyage
-#─────────────────────────────────────────────────────────────────────────────
 # Décommenter pour supprimer l ensemble des namespaces dev + monitoring + kong + traefik + ... après les tests
 # set_message "info" "0" "Suppression de tous les environnements de test:"
 # source ./scripts/bin/clean_env_dev.sh
