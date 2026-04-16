@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #===============================================================================
-# Fichier      : set_vault.sh
+# Fichier      : script_test_vault_hashicorp.sh
 # Description  : Initialise Vault, déverrouille les pods, configure un secret,
 #                active l'authentification Kubernetes et déploie une webapp de test.
 # Prérequis    : kubectl, jq installés — Vault déployé via Helm dans Kubernetes

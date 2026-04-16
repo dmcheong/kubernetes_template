@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-secret-test
+  namespace: demo-secrets
+spec:
+  serviceAccountName: app-secrets-sa
+  restartPolicy: Never
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Contenu monté :"
+          ls -l /mnt/secrets-store || true
+          echo "username=$(cat /mnt/secrets-store/username 2>/dev/null)"
+          echo "password=$(cat /mnt/secrets-store/password 2>/dev/null)"
+          echo "url=$(cat /mnt/secrets-store/url 2>/dev/null)"
+          sleep 3600
+      volumeMounts:
+        - name: secrets-store-inline
+          mountPath: /mnt/secrets-store
+          readOnly: true
+  volumes:
+    - name: secrets-store-inline
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: aws-secretsmanager-app-config

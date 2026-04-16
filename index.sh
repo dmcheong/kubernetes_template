@@ -41,7 +41,7 @@ printf "%b\n"
 #─────────────────────────────────────────────────────────────────────────────
 # Phase 2 : déploiement du cluster de test
 #   Ordre important : namespaces → pods → deployments → services
-#                    → storage → secrets → gateway
+#                    → storage → secrets
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Exécution global des scripts de déploiement du cluster:"
 printf "%b\n"
@@ -64,9 +64,6 @@ source ./test/storageclass/script_test_storageclass.sh
 # gestion des secrets chiffrés (SealedSecrets)
 source ./test/sealed-secrets/script_sealed_secret.sh
 
-# installation de la gateway Kong
-source ./test/gateway/script_kong_gateway.sh
-
 #─────────────────────────────────────────────────────────────────────────────
 # Phase 3 : monitoring — Prometheus + Grafana + OpenTelemetry
 #─────────────────────────────────────────────────────────────────────────────
@@ -84,7 +81,15 @@ source ./scripts/bin/check_installation_monitoring_tools.sh
 source ./test/services/script_test_services_monitoring.sh
 
 #─────────────────────────────────────────────────────────────────────────────
-# Phase 4 : reverse proxy — Traefik
+# Phase 4 : gateway — Kong Gateway
+#─────────────────────────────────────────────────────────────────────────────
+set_message "info" "0" "Exécution des scripts de l environnement du gateway:"
+
+# installation de la gateway Kong
+source ./test/gateway/script_kong_gateway.sh
+
+#─────────────────────────────────────────────────────────────────────────────
+# Phase 5 : reverse proxy — Traefik
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Exécution des scripts de l environnement du reverse-proxy:"
 
@@ -100,23 +105,23 @@ source ./test/ingress/reverse_proxy/install_traefik.sh
 source ./test/ingress/reverse_proxy/script_test_traefik_deploy.sh
 
 #─────────────────────────────────────────────────────────────────────────────
-# Phase 5 : vault — Hashicorp
+# Phase 6 : vault — Hashicorp
 #─────────────────────────────────────────────────────────────────────────────
-set_message "info" "0" "Exécution des scripts de l environnement des vaults."
+set_message "info" "0" "Exécution des scripts de l environnement des vaults Hashicorp + AWS Secrets Manager:"
 
 set_message "info" "0" "Mise en place du vault Hashicorp:"
 
 # namespace hashicorp
 source ./test/namespaces/script_test_namespaces_hashicorp.sh
 
-# installation du vault Haashicorp via helm
+# installation du vault Hashicorp via helm
 source ./test/vault/hashicorp/install_vault_hashicorp.sh
 
 # déploiement et configuration du vault
 source ./test/vault/hashicorp/script_test_vault_hashicorp.sh
 
 #─────────────────────────────────────────────────────────────────────────────
-# Phase 6 (optionnelle) : nettoyage
+# Phase 7 (optionnelle) : nettoyage
 #─────────────────────────────────────────────────────────────────────────────
 printf "%b\n"
 set_message "info" "0" "Fin global des scripts de déploiement."

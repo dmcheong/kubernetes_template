@@ -1,3 +1,2 @@
 sealed-secrets.pem
-./test/gateway/kong-gateway-sealed-secret.yaml
 git_commit.sh
