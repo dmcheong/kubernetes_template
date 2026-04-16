@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #===============================================================================
-# Fichier      : install_vault.sh
+# Fichier      : install_vault_hashicorp.sh
 # Description  : Installe HashiCorp Vault via Helm.
 #                Déploie Vault dans Kubernetes avec un fichier de valeurs Helm.
 # Prérequis    : helm, kubectl installés — namespace cible disponible ou créable
@@ -42,7 +42,7 @@ if ! helm repo list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "${HASH_REPO_
 fi
 
 # set_message "info" "0" "Mise à jour des repositories Helm."
-# helm repo update >/dev/null
+helm repo update >/dev/null
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification de disponibilité du chart Vault

@@ -34,6 +34,15 @@ version_lt()
 
 set_message "info" "0" "Exécution du script de vérification des outils de base"
 
+# curl
+set_message "check" "0" "Chargement du script d installation Curl"
+source "${root_path}/bin/install_curl.sh"
+if [[ ${?} -eq 0 ]] then
+    set_message "EdSMessage" "0" "Curl vérifié"
+  else
+    set_message "EdEMessage" "5" "Echec de la vérification Curl"
+fi
+
 # docker
 set_message "check" "0" "Chargement du script d installation Docker"
 source "${root_path}/bin/install_docker_engine.sh"
