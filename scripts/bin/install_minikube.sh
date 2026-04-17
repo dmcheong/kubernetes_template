@@ -97,5 +97,5 @@ if [[ ! ${?} == "0" ]]
   else
     set_message "EdSMessage" "0" "Minikube présent"
     minikube_version
-    # start_minikube
+    start_minikube
 fi
