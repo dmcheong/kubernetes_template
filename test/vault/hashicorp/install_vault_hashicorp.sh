@@ -65,7 +65,10 @@ if helm status ${HASH_RELEASE} -n ${HASHICORP_NAMESPACE} >/dev/null 2>&1
 fi
 
 set_message "info" "0" "Déploiement de Vault avec le fichier: ${HASH_VALUES_FILES}"
-helm upgrade --install "${HASH_RELEASE}" ${HASH_CHART} -n "${HASHICORP_NAMESPACE}" -f "${HASH_VALUES_FILES}" --wait
+helm upgrade --install "${HASH_RELEASE}" ${HASH_CHART} -n "${HASHICORP_NAMESPACE}" -f "${HASH_VALUES_FILES}" --wait --timeout 10m
+
+set_message "info" "0" "Temps d'attente volontaire et nécessaire de 120s pour le déploiement des pods"
+kubectl wait --for=condition=Ready pod -n ${HASHICORP_NAMESPACE} -l app.kubernetes.io/instance=${HASH_RELEASE} --timeout=120s
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification post-installation
