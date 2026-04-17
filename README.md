@@ -20,21 +20,25 @@ Environnement d'apprentissage Kubernetes automatisé avec Minikube.
 
 ```
 kubernetes_template/
-├── index.sh                       # Point d'entrée principal (orchestrateur global)
+├── index.sh                                       # Point d'entrée principal (orchestrateur global)
 ├── scripts/
-│   ├── bin/                       # Scripts d'installation des outils
+│   ├── bin/                                       # Scripts d'installation des outils
 │   │   ├── check_installation_basique_tools.sh    # Orchestre les outils de base
 │   │   ├── check_installation_monitoring_tools.sh # Orchestre les outils de monitoring
-│   │   ├── install_asdf.sh        # Gestionnaire de versions d'outils (asdf)
-│   │   ├── install_docker_engine.sh # Vérification Docker Engine
-│   │   ├── install_helm.sh        # Gestionnaire de packages Kubernetes (Helm)
-│   │   ├── install_kubectl.sh     # CLI Kubernetes (kubectl)
-│   │   ├── install_kubescore.sh   # Analyseur de manifestes YAML (kube-score)
-│   │   ├── install_kubeseal.sh    # Chiffrement des secrets + serveur NFS
-│   │   ├── install_minikube.sh    # Cluster Kubernetes local (Minikube)
-│   │   ├── install_opentelemetry.sh # Collecteur de télémétrie (OpenTelemetry)
-│   │   ├── install_prometheus.sh  # Monitoring + dashboards (Prometheus + Grafana)
-│   │   ├── install_sealedsecret.sh  # Controller SealedSecrets
+│   │   ├── install_asdf.sh                        # Gestionnaire de versions d'outils (asdf)
+│   │   ├── install_aws_cli.sh                     # CLI AWS (si besoin)
+│   │   ├── install_curl.sh                        # Transfert de données
+│   │   ├── install_docker_engine.sh               # Vérification Docker Engine
+│   │   ├── install_helm.sh                        # Gestionnaire de packages Kubernetes (Helm)
+│   │   ├── install_jq.sh                          # Traitement de données format JSON
+│   │   ├── install_kubectl.sh                     # CLI Kubernetes (kubectl)
+│   │   ├── install_kubescore.sh                   # Analyseur de manifestes YAML (kube-score)
+│   │   ├── install_kubeseal.sh                    # Chiffrement des secrets + serveur NFS
+│   │   ├── install_minikube.sh                    # Cluster Kubernetes local (Minikube)
+│   │   ├── install_opentelemetry.sh               # Collecteur de télémétrie (OpenTelemetry)
+│   │   ├── install_prometheus.sh                  # Monitoring + dashboards (Prometheus + Grafana)
+│   │   ├── install_sealedsecret.sh                # Controller SealedSecrets
+│   │   ├── install_unzip.sh                       # Extraction de données compressées (si besoin)
 │   │   └── clean_env_dev.sh       # Nettoyage de l'environnement de développement
 │   ├── config/
 │   │   └── global.env             # Versions et variables partagées par tous les scripts
@@ -52,7 +56,7 @@ kubernetes_template/
     ├── services/                  # Tests de services (ClusterIP, NodePort)
     ├── storageclass/              # Tests de volumes persistants (NFS, PVC)
     ├── template/                  # Manifestes YAML réutilisables
-    └── vault/                     # HashiCorp Vault (skeleton)
+    └── vault/                     # HashiCorp Vault (skeleton), AWS (théorie), Bitwarden
 ```
 
 ---
@@ -60,7 +64,7 @@ kubernetes_template/
 ## Lancement rapide
 
 ```bash
-# 1. Démarrer Minikube
+# 1. Démarrer Minikube (commande également présente dans install_minikube.sh)
 minikube start
 
 # 2. Lancer l'orchestrateur complet
@@ -69,10 +73,12 @@ bash index.sh
 
 L'orchestrateur exécute dans l'ordre :
 
-1. Vérification/installation des outils de base (Docker, Helm, kubectl, Minikube, asdf, kube-score, kubeseal)
+1. Vérification/installation des outils de base (Docker, Helm, kubectl, Minikube, asdf, jq, curl, kube-score, kubeseal)
 2. Déploiement du cluster de test : namespaces → pods → deployments → services → storage → secrets → gateway
 3. Vérification/installation des outils de monitoring (Prometheus + Grafana, OpenTelemetry)
-4. Déploiement des services de monitoring et du reverse proxy Traefik
+4. Déploiement de la gateway Kong Gateway
+5. Déploiement du reverse proxy Traefik
+6. Déploiement du vault
 
 ---
 
@@ -95,6 +101,7 @@ KUBECTL_VERSION="1.35.0"
 | `monitoring` | Prometheus, Grafana, OpenTelemetry Collector |
 | `traefik` | Ingress controller Traefik |
 | `kong` | API Gateway Kong |
+| `Hashicorp` | Vault |
 | `kube-system` | Controller SealedSecrets |
 
 ---
@@ -122,7 +129,7 @@ rm -rf ~/.asdf
 ## Intégration partiel du Framework CAST
 
 - CAST est un framework BASH de ARNAUD CRAMPET
-- Intégration de la partie sur l'affichage des logs dans le terminal
+- Intégration de la partie sur l'affichage des retours de commandes et traitements des erreurs dans le terminal.
 
 ```
 lib
