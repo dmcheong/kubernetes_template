@@ -25,6 +25,8 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 function get_latest_github_tag()
 {
   local _repo="${1}"

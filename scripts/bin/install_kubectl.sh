@@ -25,6 +25,8 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 function version_lt()
 {
   [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
@@ -32,6 +34,7 @@ function version_lt()
 
 function install_kubectl() 
 {
+  
   set_message "check" "0" "téléchargement de la dernière version stable de kubectl"
   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
   error_CTRL "${?}" ""
