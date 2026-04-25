@@ -40,18 +40,22 @@ function docker_version()
   set_message "check" "0" "Détermination de la version Docker installée"
   if [ -z "${CURRENT_VERSION}" ]
     then
-      set_message "EdEMessage" "1" "Impossible de déterminer la version de Docker - vérifiez que le daemon Docker fonctionne"
+      set_message "EdEMessage" "1" ""
+      set_message "info" "0" "Impossible de déterminer la version de Docker - vérifiez que le daemon Docker fonctionne"
     else
-      set_message "EdSMessage" "0" "Version Docker Engine détectée: ${CURRENT_VERSION}"
+      set_message "EdSMessage" "0" ""
+      set_message "info" "0" "Version Docker Engine détectée: ${CURRENT_VERSION}"
   fi
 
   set_message "check" "0" "Vérification compatibilité version Docker (min: ${MIN_DOCKER_VERSION})"
   version_lt "${CURRENT_VERSION}" "${MIN_DOCKER_VERSION}" > /dev/null 2>&1
   if [[ ${?} -eq 0 ]]
     then
-      set_message "EdEMessage" "1" "Version Docker trop ancienne (installée: ${CURRENT_VERSION}, min: ${MIN_DOCKER_VERSION})"
+      set_message "EdEMessage" "1" ""
+      set_message "info" "0" "Version Docker trop ancienne (installée: ${CURRENT_VERSION}, min: ${MIN_DOCKER_VERSION})"
     else
-      set_message "EdSMessage" "0" "La version de Docker Engine est compatible: ${CURRENT_VERSION}"
+      set_message "EdSMessage" "0" ""
+      set_message "info" "0" "La version de Docker Engine est compatible: ${CURRENT_VERSION}"
   fi
 }
 
@@ -60,7 +64,9 @@ command -v docker > /dev/null 2>&1
 
 if [[ ! ${?} == "0" ]]
   then
-    set_message "EdEMessage" "1" "Docker n'est pas installé - veuillez installer Docker Engine avant de continuer"
+    set_message "EdEMessage" "1" ""
+    set_message "info" "0" ""
+    set_message "info" "0" "Docker n'est pas installé - veuillez installer Docker Engine avant de continuer"
   else
     set_message "EdSMessage" "0" "docker présent"
     docker_version

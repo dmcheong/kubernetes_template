@@ -10,20 +10,25 @@
 # definition de la racine de la stack trace
 Function_PATH="/"
 # definition de la racine du projet
-root_path="$(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd))"
+root_path="$(pwd)/scripts"
+# log date time file
 # log date time file
 log_timestamp=$(date '+%Y-%m-%d_%H_%M_%S')
 # log file path
 log_file="${root_path}/log/build_all_${log_timestamp}.log"
 
 global_configuration_file="${root_path}/config/global.env"
-if [[ -f "${global_configuration_file}" ]] then
+if [[ -f "${global_configuration_file}" ]] 
+  then
     . "${global_configuration_file}"
 fi
 
-if [[ ${core_functions_loaded} -ne 1 ]] then
-    . "${root_path}/kubernetes_template/scripts/lib/core.sh"
+if [[ ${core_functions_loaded} -ne 1 ]] 
+  then
+    . "${root_path}/lib/core.sh"
 fi
+
+set_new_directory "${root_path}/log"
 
 set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d un environnement kubernetes."
 

@@ -47,7 +47,8 @@ function helm_version()
   set_message "check" "0" "Vérification compatibilité version Helm (min: ${HELM_MIN_VERSION})"
   if [ -z "${CURRENT_HELM_VERSION}" ]
     then
-      set_message "EdEMessage" "5" "Impossible de déterminer la version de Helm"
+      set_message "EdEMessage" "5" ""
+      set_message "info" "0""Impossible de déterminer la version de Helm"
     else
       version_lt "${CURRENT_HELM_VERSION}" "${HELM_MIN_VERSION}"
       if [[ ${?} -eq 0 ]]
