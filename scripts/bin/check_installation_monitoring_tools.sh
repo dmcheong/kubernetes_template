@@ -8,7 +8,7 @@
 # definition de la racine de la stack trace
 Function_PATH="/"
 # definition de la racine du projet
-root_path="$(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd))"
+root_path="$(dirname $(cd "$(dirname "${BASH_do_load_file[0]}")" && pwd))"
 # log date time file
 log_timestamp=$(date '+%Y-%m-%d_%H_%M_%S')
 # log file path
@@ -25,6 +25,8 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 # function to comparison tools, use like this:
 # version_lt "CURRENT_VERSION_TOOL" "TOOL_MINIMUM_VERSION"
 version_lt()
@@ -36,23 +38,11 @@ version_lt()
 set_message "info" "0" "Exécution du script de vérification des outils de monitoring"
 
 # prometheus + grafana
-set_message "check" "0" "Chargement du script d installation Prometheus + Grafana"
-source "${root_path}/bin/install_prometheus.sh"
-if [[ ${?} -eq 0 ]]
-  then
-    set_message "EdSMessage" "0" "Prometheus + Grafana vérifiés"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification Prometheus + Grafana"
-fi
+do_load_file "${root_path}/bin/install_prometheus.sh" "Prometheus + Grafana install script"
+
 
 # open-telemetry
-set_message "check" "0" "Chargement du script d'installation OpenTelemetry"
-source "${root_path}/bin/install_opentelemetry.sh"
-if [[ ${?} -eq 0 ]]
-  then
-    set_message "EdSMessage" "0" "OpenTelemetry vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification OpenTelemetry"
-fi
+do_load_file "${root_path}/bin/install_opentelemetry.sh" "OpenTelemetry install script"
 
-set_message "EdSMessage" "0" "Les services de monitoring Prometheus, Grafana et OpenTelemetry sont vérifiés"
+
+set_message "info" "0" "Les services de monitoring Prometheus, Grafana et OpenTelemetry sont vérifiés"

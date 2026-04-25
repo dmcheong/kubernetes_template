@@ -9,24 +9,28 @@
 # definition de la racine de la stack trace
 Function_PATH="/"
 # definition de la racine du projet
-root_path="$(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd))"
+root_path="$(dirname $(cd "$(dirname "${BASH_do_load_file[0]}")" && pwd))"
 # log date time file
 log_timestamp=$(date '+%Y-%m-%d_%H_%M_%S')
 # log file path
 log_file="${root_path}/log/build_all_${log_timestamp}.log"
 
 global_configuration_file="${root_path}/config/global.env"
-if [[ -f "${global_configuration_file}" ]] then
+if [[ -f "${global_configuration_file}" ]] 
+  then
     . "${global_configuration_file}"
 fi
 
-if [[ ${core_functions_loaded} -ne 1 ]] then
+if [[ ${core_functions_loaded} -ne 1 ]] 
+  then
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 # function to comparison tools, use like this:
 # version_lt "CURRENT_VERSION_TOOL" "TOOL_MINIMUM_VERSION"
-version_lt()
+function version_lt()
 {
   # true (0) si $1 < $2
   [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
@@ -35,95 +39,46 @@ version_lt()
 set_message "info" "0" "Exécution du script de vérification des outils de base"
 
 # curl
-set_message "check" "0" "Chargement du script d installation Curl"
-source "${root_path}/bin/install_curl.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "Curl vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification Curl"
-fi
+do_load_file "${root_path}/bin/install_curl.sh" "curl install script"
+
 
 # docker
-set_message "check" "0" "Chargement du script d installation Docker"
-source "${root_path}/bin/install_docker_engine.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "Docker vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification Docker"
-fi
+do_load_file "${root_path}/bin/install_docker_engine.sh" "docker install script"
+
 
 # helm
-set_message "check" "0" "Chargement du script d installation Helm"
-source "${root_path}/bin/install_helm.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "Helm vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification Helm"
-fi
+do_load_file "${root_path}/bin/install_helm.sh" "helm install script"
+
 
 # kubectl
-set_message "check" "0" "Chargement du script d installation kubectl"
-source "${root_path}/bin/install_kubectl.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "kubectl vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification kubectl"
-fi
+
+do_load_file "${root_path}/bin/install_kubectl.sh" "kubectl install script"
+
 
 # Minikube
-set_message "check" "0" "Chargement du script d installation Minikube"
-source "${root_path}/bin/install_minikube.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "Minikube vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification Minikube"
-fi
+do_load_file "${root_path}/bin/install_minikube.sh" "Minikube install script"
+
 
 # asdf
-set_message "check" "0" "Chargement du script d installation asdf"
-source "${root_path}/bin/install_asdf.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "asdf vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification asdf"
-fi
+do_load_file "${root_path}/bin/install_asdf.sh" "adsf install script"
+
 
 # jq
-set_message "check" "0" "Chargement du script d installation jq"
-source "${root_path}/bin/install_jq.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "jq vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification jq"
-fi
+do_load_file "${root_path}/bin/install_jq.sh" "jq install script"
+
 
 # kube-score
-set_message "check" "0" "Chargement du script d installation kube-score"
-source "${root_path}/bin/install_kubescore.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "kube-score vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification kube-score"
-fi
+do_load_file "${root_path}/bin/install_kubescore.sh" "kube-score install script"
+
 
 # kubeseal
-set_message "check" "0" "Chargement du script d installation kubeseal NFS"
-source "${root_path}/bin/install_kubeseal.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "kubeseal NFS vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification kubeseal NFS"
-fi
+do_load_file "${root_path}/bin/install_kubeseal.sh" "kubeseal NFS installation script"
 
 # sealedsecret
-set_message "check" "0" "Chargement du script d installation Sealed Secrets"
-source "${root_path}/bin/install_sealedsecret.sh"
-if [[ ${?} -eq 0 ]] then
-    set_message "EdSMessage" "0" "Sealed Secrets vérifié"
-  else
-    set_message "EdEMessage" "5" "Echec de la vérification Sealed Secrets"
-fi
+do_load_file "${root_path}/bin/install_sealedsecret.sh" "initialization script"
+
+
 
 printf "%b\n"
-set_message "EdSMessage" "0" "Tous les outils de base sont vérifiés (helm, kubectl, minikube, asdf, jq, kube-score, kubeseal, sealedsecret)"
+set_message "info" "0" "Tous les outils de base sont vérifiés (helm, kubectl, minikube, asdf, jq, kube-score, kubeseal, sealedsecret)"
 printf "%b\n"
