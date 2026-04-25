@@ -46,7 +46,7 @@ function docker_version()
   fi
 
   set_message "check" "0" "Vérification compatibilité version Docker (min: ${MIN_DOCKER_VERSION})"
-  version_lt "${CURRENT_VERSION}" "${MIN_DOCKER_VERSION}"
+  version_lt "${CURRENT_VERSION}" "${MIN_DOCKER_VERSION}" > /dev/null 2>&1
   if [[ ${?} -eq 0 ]]
     then
       set_message "EdEMessage" "1" "Version Docker trop ancienne (installée: ${CURRENT_VERSION}, min: ${MIN_DOCKER_VERSION})"
