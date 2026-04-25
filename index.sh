@@ -36,7 +36,8 @@ set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d
 # Phase 1 : vérification et installation des outils de base
 #   → Docker, Helm, kubectl, Minikube, asdf, kube-score, kubeseal
 #─────────────────────────────────────────────────────────────────────────────
-source ./scripts/bin/check_installation_basique_tools.sh
+echo "${root_path}"
+source ${root_path}/bin/check_installation_basique_tools.sh
 
 # démarrage du cluster Minikube (commenter en production)
 # set_message "info" "0" "Démarrage de Minikube."
@@ -80,7 +81,7 @@ set_message "info" "0" "Mise en place des services de monitoring:"
 source ./test/namespaces/script_test_namespaces_monitoring.sh
 
 # installation de Prometheus + Grafana + OpenTelemetry
-source ./scripts/bin/check_installation_monitoring_tools.sh
+source ${root_path}/bin/check_installation_monitoring_tools.sh
 
 # services métriques (ServiceMonitor)
 source ./test/services/script_test_services_monitoring.sh
