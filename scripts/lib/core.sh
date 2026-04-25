@@ -1,5 +1,5 @@
 
-actual_shell="$(ps -p "$(ps -p $$ -o ppid=)" -o comm=)"
+actual_shell="$(ps -p $(ps -p $$ -o ppid=) -o comm=)"
 
 # Commands auto tune 
 echo -n "curent used shell : "
@@ -662,6 +662,12 @@ function set_console_line()
     fi
 
     printf '%*s\n' "${cols}" '' | tr ' ' "${char}"
+}
+
+function filename()
+{
+	_filname_get="${1}"
+	echo ${_filname_get} | awk -F\/ '{ print $NF }'
 }
 
 
