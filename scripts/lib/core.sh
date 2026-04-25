@@ -1,4 +1,6 @@
 
+
+Check_last="${Check_last:-0}"
 actual_shell="$(ps -p $(ps -p $$ -o ppid=) -o comm=)"
 
 # Commands auto tune 
@@ -400,7 +402,7 @@ function set_message()
 	local _CYAN='\033[0;36m'
 	local _NC='\033[0m' # No Color
 
-  if [ ${Check_last} -eq "1" ] && [ "${_message_type}" = "check" ]
+  if [ ${Check_last} = "1" ] && [ "${_message_type}" = "check" ]
 	  then 
 		  echo -e "${_NC}]"
 			Check_last="0"
@@ -735,7 +737,7 @@ function do_load_file()
 						set_message "EdEMessage" "5" "Failled"
 				fi
 		else 
-			set_message "EdSMessage" "0" "file not found"
+			set_message "EdEMessage" "8" "file not found"
 	fi
 
 }

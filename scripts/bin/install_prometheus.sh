@@ -8,7 +8,10 @@
 # definition de la racine de la stack trace
 Function_PATH="/"
 # definition de la racine du projet
-root_path="$(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd))"
+if [ -z ${root_path} ]
+   then 
+    export root_path="$(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd))"
+fi
 # log date time file
 log_timestamp=$(date '+%Y-%m-%d_%H_%M_%S')
 # log file path

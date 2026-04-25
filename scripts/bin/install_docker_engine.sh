@@ -10,7 +10,10 @@
 Function_PATH="/"
 # definition de la racine du projet
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-root_path="$(dirname "$script_dir")"
+if [ -z ${root_path} ]
+   then 
+    export root_path="$(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd))"
+fi
 # root_path="$(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd))"
 # log date time file
 log_timestamp=$(date '+%Y-%m-%d_%H_%M_%S')
