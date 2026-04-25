@@ -400,6 +400,12 @@ function set_message()
 	local _CYAN='\033[0;36m'
 	local _NC='\033[0m' # No Color
 
+  if [ ${Check_last} -eq "1" ] && [ "${_message_type}" = "check" ]
+	  then 
+		  echo -e "${_NC}]"
+			Check_last="0"
+	fi
+
 	case "${_message_type}" in
 	"debug")
 		if [[ "${DEBUG_MODE}" = "1" ]]
@@ -411,6 +417,7 @@ function set_message()
 				echo -e "[${_BLUE}INFO${_NC}]\t${_timestamp} - ${_message_content}"
 		;;
 	"check")
+		Check_last="1"
 		#echo -en "\n"
 		line_length=$(get_length "$(echo -e "[${_BLUE}CHECK${_NC}]\t${_timestamp} - ${_message_content}")")
 		echo -en "[${_BLUE}CHECK${_NC}]\t${_timestamp} - ${_message_content}"
