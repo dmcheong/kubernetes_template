@@ -1,0 +1,45 @@
+# kong-route-to-nginx.yml
+# Expose une route Traefik qui envoie vers le proxy Kong,
+# puis Kong peut router vers le backend nginx.
+# Ici, on reste volontairement simple pour le lab.
+
+---
+# Ingress standard pour Kong
+# Kong prendra en charge la route /nginx et proxyfera vers nginx-service.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kong-nginx-ingress
+  namespace: dev
+  annotations:
+    kubernetes.io/ingress.class: kong
+spec:
+  rules:
+    - host: api.local
+      http:
+        paths:
+          - path: /nginx
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service
+                port:
+                  number: 80
+
+---
+# IngressRoute Traefik vers le proxy Kong
+# Le trafic externe arrive sur Traefik, qui transfère vers le proxy Kong.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-to-kong
+  namespace: kong
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`api.local`)
+      kind: Rule
+      services:
+        - name: kong-gateway-proxy
+          port: 80

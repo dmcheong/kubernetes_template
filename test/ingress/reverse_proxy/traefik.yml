@@ -1,28 +1,46 @@
-# nombre de réplicas du pod Traefik
-deployment:
-  replicas: 1
+# traefik.yml
+# Helm values pour Traefik sur Minikube.
+# Objectif :
+# - Traefik est le point d'entrée principal du lab
+# - support des Ingress standard + CRD Traefik
+# - métriques Prometheus
+# - traces OTLP vers OpenTelemetry Collector
+# - dashboard disponible en interne, pas exposé publiquement
 
-# IngressClass : permet d'avoir plusieurs controllers d'ingress dans le même cluster
-# isDefaultClass: false → Traefik ne capture pas les Ingress sans annotation explicite
+# -----------------------------------------------------------------------------
+# Déploiement Traefik
+# -----------------------------------------------------------------------------
+deployment:
+  replicas: 1  # 1 réplica suffit en lab Minikube
+
+# -----------------------------------------------------------------------------
+# IngressClass
+# Traefik ne devient pas le controller par défaut.
+# Cela évite qu'il capture tous les Ingress du cluster sans annotation explicite.
+# -----------------------------------------------------------------------------
 ingressClass:
   enabled: true
   isDefaultClass: false
   name: traefik
 
-# Activation des providers Kubernetes
+# -----------------------------------------------------------------------------
+# Providers Kubernetes
+# - kubernetesCRD : permet d'utiliser IngressRoute, Middleware, etc.
+# - kubernetesIngress : permet d'utiliser les ressources Ingress standard
+# -----------------------------------------------------------------------------
 providers:
-  # CRD Traefik : IngressRoute, Middleware, etc.
   kubernetesCRD:
     enabled: true
-  # support des ressources Ingress Kubernetes standard
   kubernetesIngress:
     enabled: true
 
+# -----------------------------------------------------------------------------
 # Ports exposés par Traefik
+# -----------------------------------------------------------------------------
 ports:
   web:
-    port: 8000           # port interne du container
-    exposedPort: 80      # port exposé par le Service
+    port: 8000
+    exposedPort: 80
     expose:
       default: true
 
@@ -33,47 +51,63 @@ ports:
       default: true
 
   traefik:
-    port: 9000           # dashboard Traefik
+    port: 9000
     expose:
-      default: false     # non exposé externalement
+      default: false  # dashboard non exposé à l'extérieur
 
   metrics:
-    port: 9100           # endpoint /metrics pour Prometheus
+    port: 9100
     expose:
-      default: false     # non exposé externalement
+      default: false  # métriques seulement en interne
 
-# Type de Service : LoadBalancer expose Traefik via une IP externe
-# sur Minikube, cela se comporte généralement comme un NodePort
+# -----------------------------------------------------------------------------
+# Type de service
+# En Minikube :
+# - LoadBalancer fonctionne avec `minikube tunnel`
+# - sinon NodePort est aussi une option de lab
+# -----------------------------------------------------------------------------
 service:
-  type: LoadBalancer
+  type: NodePort
 
-# API et dashboard Traefik
-# insecure: false → dashboard non exposé publiquement
+# -----------------------------------------------------------------------------
+# API / Dashboard Traefik
+# -----------------------------------------------------------------------------
 api:
   dashboard: true
-  insecure: false
+  insecure: false  # évite une exposition publique non protégée
 
-# Niveau de log général de Traefik
+# -----------------------------------------------------------------------------
+# Logs Traefik
+# -----------------------------------------------------------------------------
 logs:
   general:
     level: INFO
 
-# Configuration des métriques exportées par Traefik
+# -----------------------------------------------------------------------------
+# Observabilité : métriques Prometheus
+# Prometheus Operator découvre les ServiceMonitor.
+# -----------------------------------------------------------------------------
 metrics:
   prometheus:
-    addEntryPointsLabels: true   # ajoute des labels par entrypoint (web, websecure)
-    addRoutersLabels: true       # ajoute des labels par routeur
-    addServicesLabels: true      # ajoute des labels par service backend
-    entryPoint: metrics          # utilise l'entrypoint metrics (port 9100)
+    enabled: true
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+    entryPoint: metrics
 
     service:
-      enabled: true              # crée un Service Kubernetes pour exposer les métriques en interne
+      enabled: true
 
     serviceMonitor:
-      enabled: true              # permet à Prometheus Operator de découvrir automatiquement Traefik
-      namespace: monitoring      # namespace dans lequel Prometheus cherche le ServiceMonitor
+      enabled: true
+      namespace: monitoring
+      additionalLabels:
+        release: kube-prometheus-stack
 
-  # export des métriques vers un collecteur OpenTelemetry via OTLP HTTP
+  # ---------------------------------------------------------------------------
+  # Export OTLP des métriques Traefik vers l'OpenTelemetry Collector
+  # Tu peux garder cette partie pour montrer l'intégration OTel.
+  # ---------------------------------------------------------------------------
   otlp:
     enabled: true
     serviceName: traefik
@@ -81,7 +115,9 @@ metrics:
       enabled: true
       endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/metrics"
 
+# -----------------------------------------------------------------------------
 # Traces distribuées envoyées vers OpenTelemetry Collector
+# -----------------------------------------------------------------------------
 tracing:
   otlp:
     enabled: true
@@ -89,6 +125,19 @@ tracing:
       enabled: true
       endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces"
 
-# Arguments supplémentaires passés au binaire Traefik
+# -----------------------------------------------------------------------------
+# Arguments supplémentaires
+# -----------------------------------------------------------------------------
 additionalArguments:
-  - "--ping=true"        # active l'endpoint /ping pour les health checks
+  - "--ping=true"  # active /ping pour les probes / health checks
+
+# -----------------------------------------------------------------------------
+# Ressources modestes pour Minikube
+# -----------------------------------------------------------------------------
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "300m"
+    memory: "256Mi"

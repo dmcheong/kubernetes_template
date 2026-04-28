@@ -25,22 +25,20 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
+
 # for binary user, here for asdf
 LOCAL_BIN="$HOME/.local/bin"
-mkdir -p "${LOCAL_BIN}"
+set_new_directory "${LOCAL_BIN}"
 export PATH="${LOCAL_BIN}:${PATH}"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
 
 function install_asdf()
 {
-  set_message "check" "0" "téléchargement de asdf version ${ASDF_TARGET_VERSION}"
-  wget -q "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_TARGET_VERSION}/asdf-v${ASDF_TARGET_VERSION}-linux-amd64.tar.gz"
-  error_CTRL "${?}" ""
 
+  Internet_Http_Get "https://github.com/asdf-vm/asdf/releases/download/v${ASDF_TARGET_VERSION}" "asdf-v${ASDF_TARGET_VERSION}-linux-amd64.tar.gz" "${root_path}/downloads" 
+
+  cd ${root_path}/downloads
   set_message "check" "0" "extraction de l archive asdf vers ${LOCAL_BIN}"
   tar -xzf "asdf-v${ASDF_TARGET_VERSION}-linux-amd64.tar.gz" -C "${LOCAL_BIN}"
   error_CTRL "${?}" ""

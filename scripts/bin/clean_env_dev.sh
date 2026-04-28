@@ -25,26 +25,20 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 function clean_env_dev()
 {
   # la suppression du namespace supprime également les pods et autres ressources
   set_message "check" "0" "Suppression des différents namespaces automatiquement déployés comme dev + monitoring + traefik + kong + (autres)"
   kubectl delete namespace dev ingress-nginx kong kubernetes-dashboard treafik "${MONITORING_NAMESPACE}"
   error_CTRL "${?}" ""
-
-  set_message "EdSMessage" "0" "Namespaces supprimés"
 }
 
 
-set_message "check" "0" "Nettoyage de l'environnement de développement"
+set_message "info" "0" "Nettoyage de l'environnement de développement"
 clean_env_dev
 
-if [[ ! ${?} == "0" ]]
-  then
-    set_message "EdEMessage" "5" "Echec du nettoyage de l'environnement"
-  else
-    set_message "EdSMessage" "0" "Environnement nettoyé avec succès"
-fi
 
 # pour réinitialiser complètement, depuis la racine ($HOME ou $USER) :
 # minikube delete --all --purge

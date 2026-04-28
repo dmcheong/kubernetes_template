@@ -25,6 +25,8 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 function version_lt()
 {
   [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]

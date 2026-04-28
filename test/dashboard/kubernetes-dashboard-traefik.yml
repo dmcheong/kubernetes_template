@@ -1,0 +1,23 @@
+# kubernetes-dashboard-traefik.yml
+# Exposition du Kubernetes Dashboard via Traefik.
+# On route le host dashboard.local vers le service HTTPS du Dashboard.
+#
+# Remarque :
+# Le service cible est "kubernetes-dashboard-kong-proxy", conformément
+# au mode d'accès officiel actuel du Dashboard.
+
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`dashboard.local`)
+      kind: Rule
+      services:
+        - name: kubernetes-dashboard-kong-proxy
+          port: 443
+          scheme: https

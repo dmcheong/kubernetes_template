@@ -1,22 +1,136 @@
-# kong-values.yml — Helm values pour Kong Gateway
-# Se connecte au PostgreSQL installé séparément (bitnami/postgresql)
-# IMPORTANT : postgresql.enabled est désactivé car on gère PostgreSQL
-#             via un chart Helm indépendant (kong-postgresql)
+# kong-values.yml
+# Helm values pour Kong Gateway sur Minikube.
+# Objectif :
+# - utiliser PostgreSQL externe déjà installé séparément
+# - exposer le proxy Kong à l'intérieur du cluster
+# - laisser Traefik jouer le rôle d'entrée principale
+# - activer la supervision Prometheus
+# - préparer l'envoi des traces vers OpenTelemetry Collector
 
 env:
-  # connexion à PostgreSQL
-  pg_user: kong                         # utilisateur créé dans postgres-values.yml
-  pg_database: kong                     # base de données Kong
-  pg_host: kong-postgresql-postgresql   # nom DNS du Service PostgreSQL dans le cluster
+  # ---------------------------------------------------------------------------
+  # Base de données PostgreSQL externe
+  # Ces variables deviennent des variables d'environnement KONG_* dans le pod.
+  # ---------------------------------------------------------------------------
+  database: "postgres"                 # active le mode DB-less = non ; ici on utilise PostgreSQL
+  pg_user: kong                        # utilisateur PostgreSQL
+  pg_database: kong                    # base de données Kong
+  pg_host: kong-postgresql-postgresql  # service DNS PostgreSQL dans le cluster
+
+  # Mot de passe récupéré depuis un Secret Kubernetes.
+  # Important : le Secret doit exister avant l'installation/upgrade Helm.
   pg_password:
-    # injection sécurisée du mot de passe depuis le Secret Kubernetes
-    # (créé via kong-gateway-secret.yaml ou kong-gateway-sealed-secret.yaml)
     valueFrom:
       secretKeyRef:
         name: kong-ingress-controller-postgresql
         key: postgresql-password
 
-# désactivation du chart PostgreSQL intégré à Kong
-# on utilise la release kong-postgresql installée séparément
+  # ---------------------------------------------------------------------------
+  # Logs Kong
+  # En lab, sortir les logs vers stdout/stderr facilite kubectl logs.
+  # ---------------------------------------------------------------------------
+  proxy_access_log: /dev/stdout
+  proxy_error_log: /dev/stderr
+  admin_access_log: /dev/stdout
+  admin_error_log: /dev/stderr
+
+# -----------------------------------------------------------------------------
+# Désactivation du PostgreSQL intégré au chart Kong.
+# On utilise un chart PostgreSQL séparé.
+# -----------------------------------------------------------------------------
 postgresql:
   enabled: false
+
+# -----------------------------------------------------------------------------
+# Proxy Kong
+# On expose le proxy en interne au cluster.
+# Traefik se placera devant.
+# -----------------------------------------------------------------------------
+proxy:
+  enabled: true
+  type: ClusterIP
+
+  # Service HTTP du proxy
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 8000
+
+  # Service HTTPS du proxy
+  https:
+    enabled: true
+    servicePort: 443
+    containerPort: 8443
+
+# -----------------------------------------------------------------------------
+# Admin API
+# Ne pas exposer l'admin publiquement en lab si ce n'est pas nécessaire.
+# Le plus sûr est de le laisser désactivé côté Service.
+# -----------------------------------------------------------------------------
+admin:
+  enabled: false
+
+# -----------------------------------------------------------------------------
+# Kong Manager
+# Désactivé ici pour garder un lab simple.
+# Tu peux l'activer plus tard si tu veux une UI.
+# -----------------------------------------------------------------------------
+manager:
+  enabled: false
+
+# -----------------------------------------------------------------------------
+# Portail Dev / Enterprise non utilisés ici.
+# -----------------------------------------------------------------------------
+portal:
+  enabled: false
+
+portalapi:
+  enabled: false
+
+enterprise:
+  enabled: false
+
+# -----------------------------------------------------------------------------
+# Ingress Controller Kong
+# Utile si tu veux manipuler les CRD KongPlugin / KongIngress / Ingress Kong.
+# Si tu utilises Kong purement comme gateway derrière Traefik, tu peux le garder.
+# -----------------------------------------------------------------------------
+ingressController:
+  enabled: true
+  installCRDs: true
+
+# -----------------------------------------------------------------------------
+# Migrations DB Kong
+# Nécessaires au premier démarrage / upgrade.
+# -----------------------------------------------------------------------------
+migrations:
+  preUpgrade: true
+  postUpgrade: true
+
+# -----------------------------------------------------------------------------
+# Monitoring / Prometheus
+# Le plugin Prometheus de Kong expose /metrics.
+# -----------------------------------------------------------------------------
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+
+    # Important :
+    # kube-prometheus-stack sélectionne souvent les ServiceMonitor via un label release.
+    # Vérifie que ton Prometheus attend bien release=kube-prometheus-stack.
+    additionalLabels:
+      release: kube-prometheus-stack
+
+# -----------------------------------------------------------------------------
+# Ressources minimales pour Minikube lab.
+# Ajuste selon la RAM disponible.
+# -----------------------------------------------------------------------------
+resources:
+  requests:
+    cpu: "200m"
+    memory: "512Mi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"

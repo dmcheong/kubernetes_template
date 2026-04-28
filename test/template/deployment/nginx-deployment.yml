@@ -1,29 +1,141 @@
-# nginx-deployment.yml — Deployment nginx pour les tests de base
-# Déploie 3 réplicas nginx dans le namespace dev
-# Inclut les annotations Prometheus pour le scraping des métriques
+# nginx-deployment.yml
+# Déploiement NGINX de test avec exporter Prometheus.
+# Objectif :
+# - servir une application NGINX simple
+# - exposer des métriques Prometheus via nginx-prometheus-exporter
+# - permettre à Prometheus/Grafana de superviser un vrai workload
 
+---
+# ConfigMap NGINX
+# Active le endpoint /nginx_status nécessaire à l'exporter.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: dev
+data:
+  default.conf: |
+    server {
+      listen 80;
+      server_name localhost;
+
+      location / {
+        return 200 'nginx ok\n';
+        add_header Content-Type text/plain;
+      }
+
+      # Endpoint interne de statistiques NGINX pour l'exporter
+      location /nginx_status {
+        stub_status;
+        allow 127.0.0.1;
+        allow ::1;
+        allow 10.0.0.0/8;
+        allow 172.16.0.0/12;
+        allow 192.168.0.0/16;
+        deny all;
+      }
+    }
+
+---
+# Deployment NGINX + exporter Prometheus
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
-  namespace: dev          # namespace de test (créé par script_test_namespaces.sh)
+  namespace: dev
 spec:
-  replicas: 3             # nombre de Pod maintenus par le ReplicaSet géré par ce Deployment
+  replicas: 3
   selector:
     matchLabels:
-      app: nginx          # sélecteur : tous les Pods avec ce label sont gérés par ce Deployment
+      app: nginx
   template:
     metadata:
       labels:
-        app: nginx        # label appliqué à chaque Pod créé
-      annotations:
-        # activation du scraping Prometheus automatique sur ce Pod
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "8080"    # port sur lequel nginx expose /metrics
-        prometheus.io/path: "/metrics"
+        app: nginx
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest      # ⚠ utiliser une version fixe en production (ex: nginx:1.25)
-        ports:
-        - containerPort: 80
+        # ---------------------------------------------------------------------
+        # Conteneur NGINX principal
+        # ---------------------------------------------------------------------
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+
+        # ---------------------------------------------------------------------
+        # Exporter Prometheus NGINX
+        # Lit /nginx_status et ré-expose /metrics sur le port 9113
+        # ---------------------------------------------------------------------
+        - name: nginx-exporter
+          image: nginx/nginx-prometheus-exporter:1.4.2
+          args:
+            - "-nginx.scrape-uri=http://127.0.0.1:80/nginx_status"
+          ports:
+            - containerPort: 9113
+              name: metrics
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+            limits:
+              cpu: "100m"
+              memory: "64Mi"
+
+      volumes:
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config
+
+---
+# Service interne pour NGINX + metrics exporter
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: dev
+  labels:
+    app: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: metrics
+      port: 9113
+      targetPort: metrics
+
+---
+# ServiceMonitor Prometheus Operator
+# Permet à kube-prometheus-stack de découvrir les métriques NGINX exporter.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nginx-service-monitor
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - dev
+  selector:
+    matchLabels:
+      app: nginx
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s

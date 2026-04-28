@@ -25,11 +25,14 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
+
 function install_awscli() 
 {
-  set_message "check" "0" "téléchargement de AWS CLI (format unzip)"
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  error_CTRL "${?}" "awscli.unzip est téléchargé avec succès"
+  Internet_Http_Get "https://awscli.amazonaws.com" "awscli-exe-linux-x86_64.zip" "${root_path}/downloads" 
+  
+  cd ${root_path}/downloads 
 
   set_message "check" "0" "décompression de l'archive AWS CLI"
   unzip -o awscliv2.zip
@@ -42,6 +45,8 @@ function install_awscli()
   set_message "check" "0" "nettoyage des fichiers temporaires"
   rm -rf aws awscliv2.zip
   error_CTRL "${?}" "Nettoyage après installation réussi"
+
+  cd ${root_path}
 }
 
 function awscli_version()
@@ -59,21 +64,25 @@ function awscli_version()
 
 function awscli_configure()
 {
-  set_message "check" "0" "configuration de aws cli (mode non interactif)"
-
-  aws configure set aws_access_key_id "test"
+  set_message "info" "0" "configuration de aws cli (mode non interactif)"
+   
+  set_message "check" "0" "configure set aws_access_key_id"
+  aws configure set aws_access_key_id "test"  > /dev/null 2>&1 
   error_CTRL "${?}" ""
 
-  aws configure set aws_secret_access_key "test"
+  set_message "check" "0" "configure : set aws_secret_access_key"
+  aws configure set aws_secret_access_key "test" > /dev/null 2>&1 
   error_CTRL "${?}" ""
 
-  aws configure set region "us-east-1"
+  set_message "check" "0" "configure : set region"
+  aws configure set region "us-east-1" > /dev/null 2>&1 
   error_CTRL "${?}" ""
 
-  aws configure set output "json"
+  set_message "check" "0" "configure : set output"
+  aws configure set output "json" > /dev/null 2>&1 
   error_CTRL "${?}" ""
 
-  set_message "EdSMessage" "0" "configuration aws cli terminée"
+  set_message "info" "0" "configuration aws cli terminée"
 }
 
 #─────────────────────────────────────────────────────────────────────────────

@@ -1,5 +1,7 @@
-# whoami-ingressroute.yml — IngressRoute Traefik pour l'application de test whoami
-# CRD Traefik (traefik.io/v1alpha1) — alternative aux ressources Ingress standard
+# whoami-ingressroute.yml
+# IngressRoute Traefik pour exposer whoami via le host whoami.local.
+# En lab Minikube, ajoute une entrée /etc/hosts vers l'IP de minikube
+# ou vers l'IP exposée via minikube tunnel.
 
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -7,14 +9,11 @@ metadata:
   name: whoami
   namespace: dev
 spec:
-  # écoute sur l'entrypoint "web" (port 80 → voir traefik.yml)
   entryPoints:
     - web
   routes:
-    # règle de routage : toutes les requêtes avec Host: whoami.local
-    # → ajouter "$(minikube ip) whoami.local" dans /etc/hosts pour le test
     - match: Host(`whoami.local`)
       kind: Rule
       services:
-        - name: whoami     # Service cible dans le même namespace
+        - name: whoami
           port: 80

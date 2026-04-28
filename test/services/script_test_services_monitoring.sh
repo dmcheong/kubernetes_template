@@ -5,6 +5,7 @@
 #                - service-kubernetes.yml : Service nginx avec port métriques 8080
 #                - service-monitor.yml    : ServiceMonitor pour Prometheus
 # Prérequis    : Prometheus (kube-prometheus-stack) déployé dans monitoring
+# Note         : obsolescence avec la nouvelle configuration traefik/kong/OTel
 #===============================================================================
 set_message "info" "0" "Gestion des services de monitoring."
 printf "%b\n"
