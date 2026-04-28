@@ -25,6 +25,8 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 function version_lt()
 {
   [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
@@ -32,10 +34,10 @@ function version_lt()
 
 function install_jq() 
 {
-  set_message "check" "0" "téléchargement de la dernière version stable de jq"
-  curl -L -o jq "https://github.com/stedolan/jq/releases/latest/download/jq-linux-amd64"
-  error_CTRL "${?}" ""
-    
+  Internet_Http_Get "https://github.com/stedolan/jq/releases/latest/download" "jq-linux-amd64" "${root_path}/downloads" 
+  
+  cd ${root_path}/downloads
+
   set_message "check" "0" "changement des permissions pour jq"
   chmod +x jq
   error_CTRL "${?}" ""
@@ -43,6 +45,8 @@ function install_jq()
   set_message "check" "0" "déplacement de jq vers /usr/local/bin/"
   sudo mv jq /usr/local/bin/
   error_CTRL "${?}" ""
+
+  cd ${root_path}
 }
 
 function jq_version()

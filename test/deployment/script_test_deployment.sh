@@ -43,6 +43,6 @@ kubectl get pods -l app=nginx
 # (absence de resource limits, liveness probe manquante, etc.)
 #─────────────────────────────────────────────────────────────────────────────
 set_message "debug" "0" "Analyse du déploiement:"
-kube-score score "$DEPL_DIR/../template/deployment/nginx-deployment.yml"
+kube-score score "$DEPL_DIR/../template/deployment/nginx-deployment-simple-test.yml"
 
 printf "%b\n"

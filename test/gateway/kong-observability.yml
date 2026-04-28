@@ -1,0 +1,37 @@
+# kong-observability.yml
+# Ressources Kong pour activer l'observabilité globale.
+# Nécessite les CRD Kong installées par le chart Helm.
+
+---
+# Plugin Prometheus global
+# Expose les métriques Kong pour Prometheus.
+apiVersion: configuration.konghq.com/v1
+kind: KongClusterPlugin
+metadata:
+  name: prometheus-global
+  annotations:
+    kubernetes.io/ingress.class: kong
+  labels:
+    global: "true"
+plugin: prometheus
+
+---
+# Plugin OpenTelemetry global
+# Envoie les traces OTLP/HTTP vers l'OpenTelemetry Collector.
+# Tu peux plus tard ajouter metrics.endpoint et access_logs_endpoint si souhaité.
+apiVersion: configuration.konghq.com/v1
+kind: KongClusterPlugin
+metadata:
+  name: opentelemetry-global
+  annotations:
+    kubernetes.io/ingress.class: kong
+  labels:
+    global: "true"
+plugin: opentelemetry
+config:
+  endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces"
+
+  # Attributs de ressource utiles dans Grafana/Tempo plus tard
+  resource_attributes:
+    service.name: "kong-gateway"
+    deployment.environment: "lab"

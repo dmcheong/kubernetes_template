@@ -1,16 +1,17 @@
-# whoami.yml — Application de test pour valider le routage Traefik
-# Déploie le service whoami (traefik/whoami) dans le namespace dev
-# whoami renvoie des informations sur la requête HTTP reçue (headers, IP, …)
+# whoami.yml
+# Application de test simple pour valider le routage Traefik.
+# L'image traefik/whoami renvoie des informations sur la requête HTTP reçue.
+# Ce workload sert surtout à tester le chemin réseau, pas la supervision métier.
 
 ---
-# namespace dev — création idempotente
+# Namespace de lab / test.
 apiVersion: v1
 kind: Namespace
 metadata:
   name: dev
 
 ---
-# Deployment whoami : 1 réplica, annotations Prometheus pour le scraping
+# Déploiement whoami.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,21 +26,22 @@ spec:
     metadata:
       labels:
         app: whoami
-      annotations:
-        # activation du scraping Prometheus sur le port 80, chemin /metrics
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "80"
-        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: whoami
-          image: traefik/whoami    # image de test officielle Traefik
+          image: traefik/whoami:latest
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+            limits:
+              cpu: "100m"
+              memory: "64Mi"
 
 ---
-# Service ClusterIP pour exposer whoami en interne au cluster
-# Sélectionne les pods avec le label app: whoami
+# Service ClusterIP exposant whoami à l'intérieur du cluster.
 apiVersion: v1
 kind: Service
 metadata:
@@ -49,5 +51,6 @@ spec:
   selector:
     app: whoami
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 80

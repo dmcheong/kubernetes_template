@@ -1,0 +1,57 @@
+# kubernetes-dashboard-admin.yml
+# Comptes de service et droits RBAC pour Kubernetes Dashboard.
+# Usage lab / Minikube uniquement.
+# - dashboard-admin-user : accès complet au cluster
+# - dashboard-readonly-user : accès lecture seule
+#
+# IMPORTANT :
+# Le compte admin ci-dessous donne un contrôle total sur le cluster.
+# À ne pas utiliser tel quel en production.
+
+---
+# ServiceAccount admin pour se connecter au Dashboard
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dashboard-admin-user
+  namespace: kubernetes-dashboard
+
+---
+# ClusterRoleBinding admin
+# Lie le ServiceAccount au rôle cluster-admin
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dashboard-admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: dashboard-admin-user
+    namespace: kubernetes-dashboard
+
+---
+# ServiceAccount readonly pour un accès plus prudent
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dashboard-readonly-user
+  namespace: kubernetes-dashboard
+
+---
+# ClusterRoleBinding readonly
+# Le rôle "view" permet de consulter la majorité des objets sans modification.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dashboard-readonly-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - kind: ServiceAccount
+    name: dashboard-readonly-user
+    namespace: kubernetes-dashboard

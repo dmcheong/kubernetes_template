@@ -7,8 +7,9 @@
 #===============================================================================
 # chemins absolus pour être indépendant du répertoire courant
 TRAEF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-APP_FILE="$TRAEF_DIR/whoami.yml"          # Deployment + Service whoami dans traefik
+APP_FILE="$TRAEF_DIR/whoami.yml"                 # Deployment + Service whoami dans traefik
 ROUTE_FILE="$TRAEF_DIR/whoami-ingressroute.yml"  # IngressRoute CRD Traefik
+TEST_PODS_FILE="$TRAEF_DIR/../../template/deployment/nginx-deployment.yml"  # deployment pods de test nginx
 
 global_configuration_file="${root_path}/config/global.env"
 if [[ -f "${global_configuration_file}" ]]

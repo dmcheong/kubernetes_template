@@ -25,15 +25,14 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 function install_unzip() 
 {
-  set_message "check" "0" "mise à jour des dépôts apt"
-  sudo apt-get update
-  error_CTRL "${?}" ""
 
-  set_message "check" "0" "installation de unzip"
-  sudo apt-get install -y unzip
-  error_CTRL "${?}" ""
+  Do_apt_update
+  Do_apt_install_package "unzip"
+  
 }
 
 function unzip_version()

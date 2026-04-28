@@ -25,6 +25,8 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
+set_new_directory "${root_path}/log"
+
 function install_prometheus()
 {
   set_message "info" "0" "Exécution du script d'installation des outils de monitoring [Prometheus + Grafana]"
