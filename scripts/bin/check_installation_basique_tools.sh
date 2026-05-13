@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 #===============================================================================
 # Fichier      : check_installation_basique_tools.sh
 # Description  : Vérifie et installe tous les outils de base
@@ -30,14 +29,7 @@ if [[ ${core_functions_loaded} -ne 1 ]]
 fi
 
 set_new_directory "${root_path}/log"
-
-# function to comparison tools, use like this:
-# version_lt "CURRENT_VERSION_TOOL" "TOOL_MINIMUM_VERSION"
-function version_lt()
-{
-  # true (0) si $1 < $2
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+printf "%b\n"
 
 set_message "info" "0" "Exécution du script de vérification des outils de base"
 

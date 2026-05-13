@@ -28,19 +28,12 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 function install_curl() 
 {
-
   Do_apt_update
   Do_apt_install_package "curl"
-
 }
 
 function curl_version()
@@ -56,7 +49,7 @@ function curl_version()
       version_lt "${CURRENT_CURL_VERSION}" "${CURL_VERSION}"
       if [[ ${?} -eq 0 ]]
         then
-          set_message "EdWMessage" "0" "curl n'est pas à jour (actuelle: ${CURRENT_CURL_VERSION}, min: ${CURL_VERSION}) - mise à jour"
+          set_message "EdWMessage" "0" "curl n est pas à jour (actuelle: ${CURRENT_CURL_VERSION}, min: ${CURL_VERSION}) - mise à jour"
           install_curl
         else
           set_message "EdSMessage" "0" "curl à jour (actuelle: ${CURRENT_CURL_VERSION}, min: ${CURL_VERSION})"
@@ -67,7 +60,7 @@ function curl_version()
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification de l'installation du binaire curl
 #─────────────────────────────────────────────────────────────────────────────
-set_message "check" "0" "Vérification de l'installation du binaire curl"
+set_message "check" "0" "Vérification de l installation du binaire curl"
 command -v curl > /dev/null 2>&1
 
 if [[ ! ${?} == "0" ]]
@@ -75,11 +68,11 @@ if [[ ! ${?} == "0" ]]
     set_message "EdWMessage" "0" "curl absent - installation nécessaire"
     install_curl
 
-    set_message "check" "0" "Vérification de l'installation du binaire curl"
+    set_message "check" "0" "Vérification de l installation du binaire curl"
     command -v curl > /dev/null 2>&1
     if [[ ! ${?} == "0" ]]
       then   
-        set_message "EdEMessage" "5" "Echec de l'installation de curl"
+        set_message "EdEMessage" "5" "Echec de l installation de curl"
       else
         set_message "EdSMessage" "0" "curl installé avec succès"
     fi

@@ -12,7 +12,6 @@ Function_PATH="/"
 # definition de la racine du projet
 root_path="$(pwd)/scripts"
 # log date time file
-# log date time file
 log_timestamp=$(date '+%Y-%m-%d_%H_%M_%S')
 # log file path
 log_file="${root_path}/log/build_all_${log_timestamp}.log"
@@ -28,15 +27,14 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
+# set_new_directory "${root_path}/log"
+printf "%b\n"
 set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d un environnement kubernetes."
 
 #─────────────────────────────────────────────────────────────────────────────
 # Phase 1 : vérification et installation des outils de base
 #   → Docker, Helm, kubectl, Minikube, asdf, kube-score, kubeseal
 #─────────────────────────────────────────────────────────────────────────────
-echo "${root_path}"
 source ${root_path}/bin/check_installation_basique_tools.sh
 
 # démarrage du cluster Minikube (commenter en production)

@@ -404,7 +404,7 @@ function set_message()
 
   if [ ${Check_last} = "1" ] && [ "${_message_type}" = "check" ]
 	  then 
-		  echo -e "${_NC}]"
+		  echo -e "${_NC}"
 			Check_last="0"
 	fi
 
@@ -725,7 +725,7 @@ function do_load_file()
   
 
 
-  set_message "check" "0" "loading ${_file_name} ${_load_comment}"
+  set_message "check" "0" "Loading ${_file_name} ${_load_comment}"
    
 	if [ -f ${_file_to_source} ]
 		then 
@@ -737,7 +737,7 @@ function do_load_file()
 						set_message "EdEMessage" "5" "Failled"
 				fi
 		else 
-			set_message "EdEMessage" "8" "file not found"
+			set_message "EdEMessage" "8" "File not found"
 	fi
 
 }
@@ -1148,6 +1148,23 @@ function Test_apt_package_presence_sub_u ()
 	####################################################
 }
 
+function version_lt()
+{
+	#|# Description :
+	#|#
+	#|# Usage :
+	#|# version_lt "CURRENT_VERSION_TOOL" "TOOL_MINIMUM_VERSION"
+	# true (0) si $1 < $2
+	############ STACK_TRACE_BUILDER #####################
+	Function_PATH="${Function_PATH}/${FUNCNAME[0]}"
+	######################################################
+
+	[ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
+
+	############### Stack_TRACE_BUILDER ################
+	Function_PATH="$( dirname ${Function_PATH} )"
+	####################################################
+}
 
 if [[ -f docker-container.sh ]]
   then
