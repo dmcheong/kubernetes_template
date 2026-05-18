@@ -66,5 +66,6 @@ error_CTRL "${?}" "Operation completed"
 # suppression du namespace (décommenter si nécessaire) :
 # set_message "info" "0" "Suppression de l environnement namespace -> dev"
 # kubectl delete namespace dev
+# error_CTRL "${?}" "Operation completed"
 
 printf "%b\n"

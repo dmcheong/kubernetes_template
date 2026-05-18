@@ -28,14 +28,12 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
+# set_new_directory "${root_path}/log"
 
 function install_unzip() 
 {
-
   Do_apt_update
   Do_apt_install_package "unzip"
-  
 }
 
 function unzip_version()

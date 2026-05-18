@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-dangerous
+spec:
+  hostPID: true
+  containers:
+    - name: nginx
+      image: nginx:stable
+      securityContext:
+        privileged: true

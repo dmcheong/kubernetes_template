@@ -70,5 +70,6 @@ error_CTRL "${?}" "Operation completed"
 #─────────────────────────────────────────────────────────────────────────────
 # set_message "warn" "0" "Suppression du namespace monitoring"
 # kubectl delete namespace ${AWS_NAMESPACE}
+# error_CTRL "${?}" "Operation completed"
 
 printf "%b\n"

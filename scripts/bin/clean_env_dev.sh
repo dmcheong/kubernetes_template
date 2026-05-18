@@ -28,13 +28,13 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
+# set_new_directory "${root_path}/log"
 
 function clean_env_dev()
 {
   # la suppression du namespace supprime également les pods et autres ressources
   set_message "check" "0" "Suppression des différents namespaces automatiquement déployés comme dev + monitoring + traefik + kong + (autres)"
-  kubectl delete namespace dev ingress-nginx kong kubernetes-dashboard treafik "${MONITORING_NAMESPACE}"
+  kubectl delete namespace dev hashicorp kong monitoring treafik developpement production
   error_CTRL "${?}" ""
 }
 
@@ -44,5 +44,6 @@ clean_env_dev
 
 
 # pour réinitialiser complètement, depuis la racine ($HOME ou $USER) :
+# minikube delete
 # minikube delete --all --purge
 # rm -rf ~/.asdf

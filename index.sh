@@ -28,7 +28,7 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
+set_new_directory "${root_path}/logs"
 printf "%b\n"
 
 set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d un environnement kubernetes."
@@ -127,7 +127,19 @@ source ./test/vault/hashicorp/install_vault_hashicorp.sh
 source ./test/vault/hashicorp/script_test_vault_hashicorp.sh
 
 #─────────────────────────────────────────────────────────────────────────────
-# Phase 7 (optionnelle) : nettoyage
+# Phase 6 : Pods Security Admission
+#─────────────────────────────────────────────────────────────────────────────
+set_message "info" "0" "Exécution des scripts de test pour la mise en place de la politique des Pods Security Admission"
+
+# namespaces developpement et production
+source ./test/namespaces/script_test_namespaces_developpement.sh
+source ./test/namespaces/script_test_namespaces_production.sh
+
+# déploiement et test
+source ./test/pods/script_test_psa_pods.sh
+
+#─────────────────────────────────────────────────────────────────────────────
+# Phase 8 (optionnelle) : nettoyage
 #─────────────────────────────────────────────────────────────────────────────
 printf "%b\n"
 set_message "info" "0" "Fin global des scripts de déploiement."
