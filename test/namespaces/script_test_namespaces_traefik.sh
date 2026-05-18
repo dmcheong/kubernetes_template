@@ -21,6 +21,7 @@ DEBUG_MODE="1"
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Liste de tous les namespaces:"
 kubectl get namespaces
+error_CTRL "${?}" "Operation completed"
 
 #
 #─────────────────────────────────────────────────────────────────────────────
@@ -33,6 +34,7 @@ then
     set_message "EdWMessage" "0" "Namespace -> ${TRAEFIK_NAMESPACE} existe déjà, on continue."
 else
     kubectl create namespace ${TRAEFIK_NAMESPACE}
+    error_CTRL "${?}" "Operation completed"
 fi
 
 #─────────────────────────────────────────────────────────────────────────────
@@ -40,12 +42,14 @@ fi
 #─────────────────────────────────────────────────────────────────────────────
 set_message "check" "0" "Vérification de la liste des namespaces pour -> ${TRAEFIK_NAMESPACE}:"
 kubectl get namespaces ${TRAEFIK_NAMESPACE}
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Description du namespace traefik
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Description du namespace -> ${TRAEFIK_NAMESPACE}:"
 kubectl describe namespace ${TRAEFIK_NAMESPACE}
+error_CTRL "${?}" "Operation completed"
 
 #
 #─────────────────────────────────────────────────────────────────────────────
@@ -53,12 +57,14 @@ kubectl describe namespace ${TRAEFIK_NAMESPACE}
 #─────────────────────────────────────────────────────────────────────────────
 set_message "check" "0" "Vérification de l environnement namespace par défaut:"
 kubectl config view --minify | grep namespace
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Liste des événements du namespace traefik
 #─────────────────────────────────────────────────────────────────────────────
 set_message "debug" "0" "Liste de tous les évènements du namespace -> ${TRAEFIK_NAMESPACE}"
 kubectl get events -n ${TRAEFIK_NAMESPACE}
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Suppression du namespace (optionnel)

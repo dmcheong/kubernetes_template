@@ -5,7 +5,6 @@
 # Prérequis    : namespace dev créé, Deployment nginx déployé
 #===============================================================================
 set_message "info" "0" "Gestion des services"
-printf "%b\n"
 
 # Utilisation du paramètre set_message "debug" "0" ""
 DEBUG_MODE="1"
@@ -15,10 +14,12 @@ DEBUG_MODE="1"
 #─────────────────────────────────────────────────────────────────────────────
 set_message "check" "0" "Vérification du déploiement avant la mise en place des services:"
 kubectl get deployment.app
+error_CTRL "${?}" "Operation completed"
 
 # listage des pods avec leur IP pour comprendre la sélection par labels
 set_message "info" "0" "Liste des pods dans le déploiement spécifique:"
 kubectl get pods -o wide
+error_CTRL "${?}" "Operation completed"
 
 ##
 #─────────────────────────────────────────────────────────────────────────────
@@ -31,9 +32,12 @@ SERV_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 set_message "info" "0" "Création du service clusterip:"
 kubectl apply -f "$SERV_DIR/../template/service/nginx-clusterip-service.yml"
+error_CTRL "${?}" "Operation completed"
 
 set_message "check" "0" "Vérification de la liste des services:"
 kubectl get services
+error_CTRL "${?}" "Operation completed"
+printf "%b\n"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Test de connectivité interne au cluster
@@ -42,20 +46,26 @@ kubectl get services
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Cette section est un test de connexion sur un pod temporaire:"
 
-set_message "info" "0" "Création d un pod temporaire:"
-kubectl run test-pod --image=busybox --restart=Never -- sleep 3600
+if kubectl get pod test-pod -n dev >/dev/null 2>&1; then
+  set_message "info" "0" "Le pod existe déjà on continue"
+else
+  set_message "info" "0" "Création d un pod temporaire:"
+  kubectl run test-pod --image=busybox --restart=Never -- sleep 3600
 
-# attendre que le pod soit prêt avant de l'utiliser
-set_message "debug" "0" "Temps d attente avec latence volontaire pour le pod temporaire pour éviter des erreurs."
-kubectl wait --for=condition=Ready pod/test-pod --timeout=30s
+  # attendre que le pod soit prêt avant de l'utiliser
+  set_message "info" "0" "Temps d attente avec latence volontaire pour le pod temporaire pour éviter des erreurs, 30s."
+  kubectl wait --for=condition=Ready pod/test-pod --timeout=30s
+  error_CTRL "${?}" "Operation completed"
 
-# requête HTTP vers le service ClusterIP depuis l'intérieur du cluster
-set_message "debug" "0" "Ouverture du terminal du pod pour exécuter un test de connexion au cluster via le pod:"
-kubectl exec -it test-pod -- sh -c "wget -qO- http://nginx-clusterip-service"
+  # requête HTTP vers le service ClusterIP depuis l'intérieur du cluster
+  set_message "debug" "0" "Ouverture du terminal du pod pour exécuter un test de connexion au cluster via le pod:"
+  kubectl exec -it test-pod -- sh -c "wget -qO- http://nginx-clusterip-service"
 
-# nettoyage du pod temporaire
-set_message "info" "0" "Suppression du pod temporaire:"
-kubectl delete pod test-pod
+  # nettoyage du pod temporaire
+  set_message "info" "0" "Suppression du pod temporaire:"
+  kubectl delete pod test-pod
+  error_CTRL "${?}" "Operation completed"
+fi
 
 ##
 #─────────────────────────────────────────────────────────────────────────────
@@ -65,11 +75,13 @@ kubectl delete pod test-pod
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Application du service NodePort:"
 kubectl apply -f "$SERV_DIR/../template/service/nginx-nodeport-service.yml"
+error_CTRL "${?}" "Operation completed"
 
 ######################### wait
 set_message "debug" "0" "Temps d attente avec latence volontaire pour le pod temporaire pour éviter des erreurs; 120s."
 # kubectl wait --for=condition=avaible deployment/nginx --timeout=120s
 kubectl wait --for=condition=Ready pod -l app=nginx --timeout=120s
+error_CTRL "${?}" "Operation completed"
 #########################
 
 # obtenir l'IP du nœud Minikube

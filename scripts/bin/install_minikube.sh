@@ -28,36 +28,37 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 # démarrage du cluster Minikube (commenter en production)
 # ainsi que les appels de cette fonction
 function start_minikube()
 {
-  set_message "info" "0" "Démarrage de Minikube"
-  set_message "EdWMessage" "0" "Commenter cette fonction pour la production."
-  minikube start --driver=docker
-  printf "%b\n"
+  STATUS=$(minikube status --format='{{.Host}}' 2>/dev/null)
+
+  if [ "$STATUS" = "Running" ]; then
+    set_message "info" "0" "Minikube tourne déjà :)"
+  else
+    set_message "info" "0" "Démarrage de Minikube"
+    set_message "EdWMessage" "0" "Commenter cette fonction pour la production."
+    minikube start --driver=docker
+    printf "%b\n"
+  fi
 }
 
 function install_minikube()
 {
   set_message "check" "0" "téléchargement du binaire minikube"
   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   set_message "check" "0" "installation de minikube vers /usr/local/bin/"
   sudo install minikube-linux-amd64 /usr/local/bin/minikube
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   set_message "check" "0" "nettoyage de l'archive minikube"
   rm minikube-linux-amd64
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 }
 
 function minikube_version()
@@ -70,7 +71,7 @@ function minikube_version()
     then
       set_message "EdEMessage" "5" "Impossible de déterminer la version de Minikube"
     else
-      version_lt "${CURRENT_MINIKUBE_VERSION}" "${MINIKUBE_MIN_VERSION}"
+      version_lt "${CURRENT_MINIKUBE_VERSION}" "${MINIKUBE_MIN_VERSION}" > /dev/null 2>&1
       if [[ ${?} -eq 0 ]]
         then
           set_message "EdWMessage" "0" "Minikube n'est pas à jour (actuelle: ${CURRENT_MINIKUBE_VERSION}, min: ${MINIKUBE_MIN_VERSION}) - mise à jour"

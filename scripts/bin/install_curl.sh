@@ -28,19 +28,12 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 function install_curl() 
 {
-
   Do_apt_update
   Do_apt_install_package "curl"
-
 }
 
 function curl_version()
@@ -53,7 +46,7 @@ function curl_version()
     then
       set_message "EdEMessage" "5" "Impossible de déterminer la version de curl"
     else
-      version_lt "${CURRENT_CURL_VERSION}" "${CURL_VERSION}"
+      version_lt "${CURRENT_CURL_VERSION}" "${CURL_VERSION}" > /dev/null 2>&1
       if [[ ${?} -eq 0 ]]
         then
           set_message "EdWMessage" "0" "curl n'est pas à jour (actuelle: ${CURRENT_CURL_VERSION}, min: ${CURL_VERSION}) - mise à jour"

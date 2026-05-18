@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 #===============================================================================
 # Fichier      : check_installation_basique_tools.sh
 # Description  : Vérifie et installe tous les outils de base
@@ -29,15 +28,7 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-# function to comparison tools, use like this:
-# version_lt "CURRENT_VERSION_TOOL" "TOOL_MINIMUM_VERSION"
-function version_lt()
-{
-  # true (0) si $1 < $2
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 set_message "info" "0" "Exécution du script de vérification des outils de base"
 
@@ -54,7 +45,6 @@ do_load_file "${root_path}/bin/install_helm.sh" "helm install script"
 
 
 # kubectl
-
 do_load_file "${root_path}/bin/install_kubectl.sh" "kubectl install script"
 
 
@@ -77,11 +67,10 @@ do_load_file "${root_path}/bin/install_kubescore.sh" "kube-score install script"
 # kubeseal
 do_load_file "${root_path}/bin/install_kubeseal.sh" "kubeseal NFS installation script"
 
+
 # sealedsecret
 do_load_file "${root_path}/bin/install_sealedsecret.sh" "initialization script"
 
 
-
 printf "%b\n"
-set_message "info" "0" "Tous les outils de base sont vérifiés (helm, kubectl, minikube, asdf, jq, kube-score, kubeseal, sealedsecret)"
-printf "%b\n"
+set_message "info" "0" "Tous les outils de base sont vérifiés (curl, docker, helm, kubectl, minikube, asdf, jq, kube-score, kubeseal, sealedsecret)"

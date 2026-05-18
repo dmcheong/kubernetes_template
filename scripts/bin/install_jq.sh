@@ -28,12 +28,7 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 function install_jq() 
 {
@@ -43,11 +38,11 @@ function install_jq()
 
   set_message "check" "0" "changement des permissions pour jq"
   chmod +x jq
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   set_message "check" "0" "déplacement de jq vers /usr/local/bin/"
   sudo mv jq /usr/local/bin/
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   cd ${root_path}
 }
@@ -62,7 +57,7 @@ function jq_version()
     then
       set_message "EdEMessage" "5" "Impossible de déterminer la version de jq"
     else
-      version_lt "${CURRENT_JQ_VERSION}" "${JQ_VERSION}"
+      version_lt "${CURRENT_JQ_VERSION}" "${JQ_VERSION}" > /dev/null 2>&1
       if [[ ${?} -eq 0 ]]
         then
           set_message "EdWMessage" "0" "jq n'est pas à jour (actuelle: ${CURRENT_JQ_VERSION}, min: ${JQ_VERSION}) - mise à jour"

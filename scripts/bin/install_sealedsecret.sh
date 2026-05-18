@@ -28,7 +28,7 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
+# set_new_directory "${root_path}/log"
 
 function get_latest_github_tag()
 {
@@ -44,7 +44,7 @@ function install_sealedsecret()
 {
   set_message "check" "0" "Détection de la dernière release de Sealed-Secrets"
   LATEST_TAG="$(get_latest_github_tag "${SEALEDSECRETS_REPO}")"
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   if [[ -z "${LATEST_TAG:-}" ]]; then
     set_message "EdEMessage" "1" "Impossible de récupérer la dernière release GitHub - vérifiez la connectivité"
@@ -59,16 +59,15 @@ function install_sealedsecret()
   else
     set_message "info" "0" "Controller absent du namespace kube-system - installation depuis ${LATEST_TAG}"
     kubectl apply -f "https://github.com/${SEALEDSECRETS_REPO}/releases/download/${LATEST_TAG}/controller.yaml"
-    error_CTRL "${?}" ""
+    error_CTRL "${?}" "Operation completed"
   fi
 
   # vérification finale
   set_message "check" "0" "Vérification finale du déploiement sealed-secrets-controller"
   printf "%b\n"
   kubectl -n kube-system get deploy sealed-secrets-controller
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 }
-
 
 set_message "check" "0" "Vérification de l'installation de Sealed Secrets"
 install_sealedsecret

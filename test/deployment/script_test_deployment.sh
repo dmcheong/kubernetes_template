@@ -21,20 +21,24 @@ DEPL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Création d un déploiement:"
 kubectl apply -f "$DEPL_DIR/../template/deployment/nginx-deployment.yml"
+error_CTRL "${?}" "Operation completed"
 
 # vérification des ReplicaSets créés par le Deployment
 set_message "info" "0" "Liste des replicasets"
 kubectl get rs
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification des pods déployés
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Liste des pods dans l environnement namespaces -> dev:"
 kubectl get pods -n dev
+error_CTRL "${?}" "Operation completed"
 
 # filtrage par label app=nginx (selector du Deployment)
 set_message "info" "0" "Liste des pods avec pour nom de app -> nginx:"
 kubectl get pods -l app=nginx
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Analyse du manifeste avec kube-score

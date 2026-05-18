@@ -29,6 +29,7 @@ if [[ ${core_functions_loaded} -ne 1 ]]
 fi
 
 set_new_directory "${root_path}/log"
+printf "%b\n"
 
 set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d un environnement kubernetes."
 
@@ -36,7 +37,6 @@ set_message "info" "0" "Bonjour, bienvenue dans sur le déploiment automatique d
 # Phase 1 : vérification et installation des outils de base
 #   → Docker, Helm, kubectl, Minikube, asdf, kube-score, kubeseal
 #─────────────────────────────────────────────────────────────────────────────
-echo "${root_path}"
 source ${root_path}/bin/check_installation_basique_tools.sh
 
 # démarrage du cluster Minikube (commenter en production)
@@ -146,6 +146,8 @@ printf "%b\n"
 # suppression de l image minikube (décommenter si nécessaire)
 # set_message "info" "0" "Suppression de l'image Minikube pour le test entier du script"
 # minikube delete
+# ou
+# minikube delete --purge --all
 # printf "%b\n"
 
 set_message "EdSMessage" "0" "Fin du script d automatisation."

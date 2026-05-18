@@ -21,6 +21,7 @@ DEBUG_MODE="1"
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Liste de tous les namespaces:"
 kubectl get namespaces
+error_CTRL "${?}" "Operation completed"
 
 #
 #─────────────────────────────────────────────────────────────────────────────
@@ -33,6 +34,7 @@ then
     set_message "EdWMessage" "0" "Namespace -> ${MONITORING_NAMESPACE} existe déjà, on continue."
 else
     kubectl create namespace ${MONITORING_NAMESPACE}
+    error_CTRL "${?}" "Operation completed"
 fi
 
 #─────────────────────────────────────────────────────────────────────────────
@@ -40,29 +42,34 @@ fi
 #─────────────────────────────────────────────────────────────────────────────
 set_message "check" "0" "Vérification de la liste des namespaces pour -> ${MONITORING_NAMESPACE}:"
 kubectl get namespace ${MONITORING_NAMESPACE}
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Description du namespace monitoring
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Description du namespace -> ${MONITORING_NAMESPACE}:"
 kubectl describe namespace ${MONITORING_NAMESPACE}
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification du namespace par défaut
 #─────────────────────────────────────────────────────────────────────────────
 set_message "check" "0" "Vérification de l environnement namespace par défaut:"
 kubectl config view --minify | grep namespace
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Liste des événements du namespace monitoring
 #─────────────────────────────────────────────────────────────────────────────
 set_message "debug" "0" "Liste de tous les évènements du namespace -> ${MONITORING_NAMESPACE}"
 kubectl get events -n ${MONITORING_NAMESPACE}
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Suppression du namespace (optionnel)
 #─────────────────────────────────────────────────────────────────────────────
 # set_message "warn" "0" "Suppression du namespace monitoring"
 # kubectl delete namespace ${MONITORING_NAMESPACE}
+# error_CTRL "${?}" "Operation completed"
 
-printf "\n"
+printf "%b\n"

@@ -193,11 +193,11 @@ function error_CTRL()
 	Function_Name="${FUNCNAME[0]}"
 	Function_PATH="${Function_PATH}/${Function_Name}"
 	######################################################
-	set_message "debug" "0" "current function path : [ ${_Function_PATH} ]  | Function Name [ ${_Function_Name} ]  "
+	set_message "debug" "0" "current function path : [ ${_Function_PATH} ]  | Function Name [ ${_Function_Name} ]"
 
 	local _result="${1}"
 	local _result_msg="${2}"
-  local _force_level="${3:-1}"
+	local _force_level="${3:-1}"
 	local _internal_call="${4}"
 	local _internal_call_base_message="${5}"
 	local _on_fail_action="${6}"
@@ -206,7 +206,7 @@ function error_CTRL()
 	if [[ ${_internal_call} -eq 1 ]]
     then 
 			set_message "check" "0" "${_internal_call_base_message}"
-  fi 
+	fi 
 
 
 	if [[ "${_result}" = "0" ]]
@@ -217,11 +217,11 @@ function error_CTRL()
 				 		${_on_sucess_action}
 			fi
 		else
-		  if [ ! -z ${_on_fail_action} ]
-			   then 
+			if [ ! -z ${_on_fail_action} ]
+				then 
 				    set_message "EdEMessage" "0" "${_result_msg}"
 				 		${_on_fail_action}
-				 else 
+				else 
 				   	set_message "EdEMessage" "${_force_level}" "${_result_msg}"
 			fi	
 	fi
@@ -297,7 +297,7 @@ function Empty_Var_Control()
 	local _test_mode="${5}"
   
 	# configure errLevel for test pupose ( won t exit on error)
-  if [[ ${_test_mode} -eq 1 ]]
+	if [[ ${_test_mode} -eq 1 ]]
 	   	then 
 				local _errLevel="0"
 		  else 
@@ -404,7 +404,7 @@ function set_message()
 
   if [ ${Check_last} = "1" ] && [ "${_message_type}" = "check" ]
 	  then 
-		  echo -e "${_NC}]"
+		  echo -e "${_NC}"
 			Check_last="0"
 	fi
 
@@ -416,13 +416,13 @@ function set_message()
 		fi
 		;;
 	"info")
-				echo -e "[${_BLUE}INFO${_NC}]\t${_timestamp} - ${_message_content}"
+				echo -e "[${_BLUE}INFO${_NC}]\t${_timestamp} - ${_message_content}" && printf '%b\n'
 		;;
 	"check")
 		Check_last="1"
 		#echo -en "\n"
 		line_length=$(get_length "$(echo -e "[${_BLUE}CHECK${_NC}]\t${_timestamp} - ${_message_content}")")
-		echo -en "[${_BLUE}CHECK${_NC}]\t${_timestamp} - ${_message_content}"
+		echo -en "[${_BLUE}CHECK${_NC}]\t${_timestamp} - ${_message_content}"  && printf '%b\n'
 		set_length "$(echo -e "[${_BLUE}CHECK${_NC}]\t${_timestamp} - ${_message_content}")"
 		;;
 	"EdSMessage")
@@ -721,7 +721,7 @@ function do_load_file()
 
 	local _file_to_source="${1}"
 	local _load_comment="${2}"
-  local _file_name="$(filename ${_file_to_source})"
+	local _file_name="$(filename ${_file_to_source})"
   
 
 
@@ -1148,13 +1148,50 @@ function Test_apt_package_presence_sub_u ()
 	####################################################
 }
 
+function version_lt ()
+{
+	#|# used var :
+	#|#                var Current_Version_Tool provided by parameter $1
+	#|#                var Tool_Minimum_Version provided by parameter $2
+	#|# usage :
+	#|#              version_lt "CURRENT_VERSION_TOOL" "TOOL_MINIMUM_VERSION"
+	#|# Description :
+	#|#              return 0 if CURRENT_VERSION_TOOL is lower than TOOL_MINIMUM_VERSION
+	#|#              return 1 otherwise
+	############ STACK_TRACE_BUILDER #####################
+	Function_PATH="${Function_PATH}/${FUNCNAME[0]}"
+	######################################################
+	set_message "debug" "0" "current function path : [ ${Function_PATH} ]  | function Name [ ${Function_Name} ]  "
+
+	local Current_Version_Tool="${1}"
+	local Tool_Minimum_Version="${2}"
+	local Lowest_Version=""
+
+	Empty_Var_Control "${Current_Version_Tool}" "Current_Version_Tool" "2"
+	Empty_Var_Control "${Tool_Minimum_Version}" "Tool_Minimum_Version" "2"
+
+	set_message "check" "0" "checking version ${Current_Version_Tool} < ${Tool_Minimum_Version}"
+
+	Lowest_Version="$(printf '%s\n%s\n' "${Current_Version_Tool}" "${Tool_Minimum_Version}" | sort -V | head -n 1)"
+
+	if [[ "${Lowest_Version}" = "${Current_Version_Tool}" ]] && [[ "${Current_Version_Tool}" != "${Tool_Minimum_Version}" ]]
+		then
+			set_message "EdSMessage" "0" ""
+			return 0
+		else
+			set_message "EdEMessage" "0" ""
+			return 1
+	fi
+	############### Stack_TRACE_BUILDER ################
+	Function_PATH="$( dirname ${Function_PATH} )"
+	####################################################
+}
 
 if [[ -f docker-container.sh ]]
   then
 		set_message "check" "0" "Loading docker-container.sh"
 		. docker-container.sh
 fi
-
 
 
 check_dependencies

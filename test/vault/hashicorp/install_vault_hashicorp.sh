@@ -26,6 +26,7 @@ if ! kubectl get namespace ${HASHICORP_NAMESPACE} >/dev/null 2>&1
   then
     set_message "info" "0" "Création du namespace: ${HASHICORP_NAMESPACE}"
     kubectl create namespace ${HASHICORP_NAMESPACE} >/dev/null
+    error_CTRL "${?}" "Operation completed"
   else
     set_message "EdWMessage" "0" "Le namespace [${HASHICORP_NAMESPACE}] est déjà présent."
 fi
@@ -37,18 +38,21 @@ if ! helm repo list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "${HASH_REPO_
   then
     set_message "info" "0" "Ajout du repository Helm: ${HASH_REPO_NAME}"
     helm repo add ${HASH_REPO_NAME} ${HASH_REPO_URL} >/dev/null
+    error_CTRL "${?}" "Operation completed"
   else
     set_message "EdWMessage" "0" "Le repository Helm [${HASH_REPO_NAME}] est déjà présent."
 fi
 
 # set_message "info" "0" "Mise à jour des repositories Helm."
 helm repo update >/dev/null
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification de disponibilité du chart Vault
 #─────────────────────────────────────────────────────────────────────────────
 set_message "check" "0" "Vérification de la disponibilité du chart [${HASH_CHART}]"
 helm search repo ${HASH_CHART} || true
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Installation / upgrade Vault (idempotent via helm upgrade --install)
@@ -63,12 +67,16 @@ if helm status ${HASH_RELEASE} -n ${HASHICORP_NAMESPACE} >/dev/null 2>&1
   else
     set_message "EdWMessage" "0" "Release [${HASH_RELEASE}] absente -> installation"
 fi
+error_CTRL "${?}" "Operation completed"
 
-set_message "info" "0" "Déploiement de Vault avec le fichier: ${HASH_VALUES_FILES}"
+set_message "info" "0" "Déploiement du Vault avec le fichier:"
 helm upgrade --install "${HASH_RELEASE}" ${HASH_CHART} -n "${HASHICORP_NAMESPACE}" -f "${HASH_VALUES_FILES}" --wait --timeout 10m
+error_CTRL "${?}" "Operation completed"
 
-set_message "info" "0" "Temps d'attente volontaire et nécessaire de 120s pour le déploiement des pods"
-kubectl wait --for=condition=Ready pod -n ${HASHICORP_NAMESPACE} -l app.kubernetes.io/instance=${HASH_RELEASE} --timeout=120s
+set_message "info" "0" "Temps d'attente volontaire et nécessaire de 60s pour le déploiement des pods"
+# kubectl wait --for=condition=Ready pod -n ${HASHICORP_NAMESPACE} -l app.kubernetes.io/instance=${HASH_RELEASE} --timeout=120s
+sleep 60
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification post-installation

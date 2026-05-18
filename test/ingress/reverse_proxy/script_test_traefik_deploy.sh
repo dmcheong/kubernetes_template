@@ -31,22 +31,27 @@ set_message "info" "0" "Déploiement de l'application de test de traefik pour le
 [ -f "$ROUTE_FILE" ] || { echo "ERREUR: fichier introuvable: $ROUTE_FILE"; exit 1; }
 
 kubectl apply -f "${APP_FILE}"
+error_CTRL "${?}" "Operation completed"
 kubectl apply -f "${ROUTE_FILE}"
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification des ressources déployées dans traefik
 #─────────────────────────────────────────────────────────────────────────────
 printf "%b\n"
-set_message "check" "0" "Vérification des resouces relié à traefik dans l environnement namespace: dev"
+set_message "check" "0" "Vérification des ressources relié à traefik dans l environnement namespace: dev"
 printf "%b\n"
 set_message "check" "0" "Vérification du pod whoami connecté à traefik dans le namespace -> dev"
 kubectl get pods -n dev | grep whoami
+error_CTRL "${?}" "Operation completed"
 
 set_message "check" "0" "Vérification du service whoami connecté à traefik dans le namespace -> dev"
 kubectl get svc -n dev | grep whoami
+error_CTRL "${?}" "Operation completed"
 
 set_message "check" "0" "Vérification de l ingressroute whoami connecté à traefik dans le namespace -> dev"
 kubectl get ingressroute -n dev | grep whoami
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Instructions de test manuel

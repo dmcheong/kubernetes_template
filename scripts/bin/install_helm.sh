@@ -28,18 +28,13 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 function install_helm()
 {
   set_message "check" "0" "téléchargement et installation de la dernière version stable de Helm"
   curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 }
 
 function helm_version()
@@ -53,7 +48,7 @@ function helm_version()
       set_message "EdEMessage" "5" ""
       set_message "info" "0""Impossible de déterminer la version de Helm"
     else
-      version_lt "${CURRENT_HELM_VERSION}" "${HELM_MIN_VERSION}"
+      version_lt "${CURRENT_HELM_VERSION}" "${HELM_MIN_VERSION}" > /dev/null 2>&1
       if [[ ${?} -eq 0 ]]
         then
           set_message "EdWMessage" "0" "Helm n'est pas à jour (actuelle: ${CURRENT_HELM_VERSION}, min: ${HELM_MIN_VERSION}) - mise à jour"

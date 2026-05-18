@@ -14,4 +14,6 @@ spec:
       image: alpine      # image Linux minimaliste (base BusyBox + APK)
       ports:
         - containerPort: 80
+      command: ["/bin/sh"]
+      args: ["-c", "tail -f /dev/null"]
       # pour maintenir le pod en vie : ajouter command: ["sleep", "3600"]

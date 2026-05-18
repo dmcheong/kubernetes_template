@@ -1,2 +1,3 @@
 sealed-secrets.pem
 git_commit.sh
+./scripts/log

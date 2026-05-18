@@ -28,18 +28,12 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
+# set_new_directory "${root_path}/log"
 
 # for binary user, here for asdf
 LOCAL_BIN="$HOME/.local/bin"
 set_new_directory "${LOCAL_BIN}"
 export PATH="${LOCAL_BIN}:${PATH}"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
 
 function install_asdf()
 {
@@ -49,15 +43,15 @@ function install_asdf()
   cd ${root_path}/downloads
   set_message "check" "0" "extraction de l archive asdf vers ${LOCAL_BIN}"
   tar -xzf "asdf-v${ASDF_TARGET_VERSION}-linux-amd64.tar.gz" -C "${LOCAL_BIN}"
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   set_message "check" "0" "changement des permissions pour asdf"
   chmod +x "${LOCAL_BIN}/asdf"
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   set_message "check" "0" "nettoyage de l archive asdf"
   rm -f "asdf-v${ASDF_TARGET_VERSION}-linux-amd64.tar.gz"
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 }
 
 function asdf_version()
@@ -70,7 +64,7 @@ function asdf_version()
     then
       set_message "EdEMessage" "5" "Impossible de déterminer la version de asdf"
     else
-      version_lt "${CURRENT_ASDF_VERSION}" "${ASDF_MIN_VERSION}"
+      version_lt "${CURRENT_ASDF_VERSION}" "${ASDF_MIN_VERSION}" > /dev/null 2>&1
       if [[ ${?} -eq 0 ]]
         then
           set_message "EdWMessage" "0" "asdf n est pas à jour (actuelle: ${CURRENT_ASDF_VERSION}, min: ${ASDF_MIN_VERSION}) - mise à jour"

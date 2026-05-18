@@ -28,27 +28,22 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 function install_kubectl() 
 {
   
   set_message "check" "0" "téléchargement de la dernière version stable de kubectl"
   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
     
   set_message "check" "0" "changement des permissions pour kubectl"
   chmod +x kubectl
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   set_message "check" "0" "déplacement de kubectl vers /usr/local/bin/"
   sudo mv kubectl /usr/local/bin/
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 }
 
 function kubectl_version()
@@ -91,4 +86,3 @@ if [[ ! ${?} == "0" ]]
  else 
   set_message "EdSMessage" "0" "kubectl présent"
 fi 
-

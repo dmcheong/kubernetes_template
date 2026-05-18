@@ -17,10 +17,14 @@ printf "%b\n"
 # Provisioner utilisé : nfs.csi.k8s.io (CSI NFS driver)
 #─────────────────────────────────────────────────────────────────────────────
 # STOR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # set_message "info" "0" "Création d une StorageClass:"
 # kubectl apply -f "$STOR_DIR/../template/storage/storageclass-nfs.yml"
+# error_CTRL "${?}" "Operation completed"
+
 # set_message "info" "0" "Liste des StorageClass:"
 # kubectl get storageclass
+# error_CTRL "${?}" "Operation completed"
 
 # chemin absolu pour les templates
 STOR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -33,9 +37,11 @@ STOR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Création d une Persistance Volume Claim pour simuler en local un serveur NFS:"
 kubectl apply -f "$STOR_DIR/../template/storage/pvc-local.yml"
+error_CTRL "${?}" "Operation completed"
 
 set_message "check" "0" "Liste des PersistantVolumeClaim:"
 kubectl get pvc
+error_CTRL "${?}" "Operation completed"
 
 ##
 #─────────────────────────────────────────────────────────────────────────────
@@ -45,9 +51,11 @@ kubectl get pvc
 #─────────────────────────────────────────────────────────────────────────────
 set_message "info" "0" "Application du déploiement du PVC via un serveur NFS (NGINX):"
 kubectl apply -f "$STOR_DIR/../template/deployment/deployment-nfs.yml"
+error_CTRL "${?}" "Operation completed"
 
 set_message "check" "0" "Listes des pods:"
 kubectl get pods
+error_CTRL "${?}" "Operation completed"
 
 set_message "info" "0" "La persistance du volume via un serveur NFS est mis en place."
 

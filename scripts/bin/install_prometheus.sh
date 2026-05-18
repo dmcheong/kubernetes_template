@@ -28,11 +28,12 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
+# set_new_directory "${root_path}/log"
 
 function install_prometheus()
 {
   set_message "info" "0" "Exécution du script d'installation des outils de monitoring [Prometheus + Grafana]"
+  printf "%b\n"
 
   # création du namespace monitoring
   set_message "check" "0" "Vérification du namespace cible: ${MONITORING_NAMESPACE}"
@@ -69,7 +70,7 @@ function install_prometheus()
 
   if [ -n "${VALUES_FILE:-}" ] && [ -f "${VALUES_FILE}" ]; then
     set_message "info" "0" "Déploiement via Helm de valeurs spécifiques: ${VALUES_FILE}"
-    helm upgrade --install "${PROMETHEUS_RELEASE}" "${PROMETHEUS_CHART}" -n "${MONITORING_NAMESPACE}" -f "${VALUES_FILE}" --wait
+    helm upgrade --install "${PROMETHEUS_RELEASE}" "${PROMETHEUS_CHART}" -n "${MONITORING_NAMESPACE}" -f "${VALUES_FILE}" --wait  
   else
     set_message "info" "0" "Déploiement via Helm des valeurs par défaut"
     helm upgrade --install "${PROMETHEUS_RELEASE}" "${PROMETHEUS_CHART}" -n "${MONITORING_NAMESPACE}" --wait
@@ -78,9 +79,11 @@ function install_prometheus()
 
   set_message "info" "0" "Liste des Pods principaux dans [${MONITORING_NAMESPACE}]:"
   kubectl get pods -n "${MONITORING_NAMESPACE}" | grep -E 'prometheus|alertmanager|grafana|operator|node-exporter|kube-state-metrics' || true
+  error_CTRL "${?}" "Operation completed"
 
   set_message "info" "0" "Liste des services dans le namespace ${MONITORING_NAMESPACE}:"
   kubectl get services -n "${MONITORING_NAMESPACE}"
+  error_CTRL "${?}" "Operation completed"
 
   set_message "info" "0" "Pour accéder aux tableaux de bords dans un navigateur lancer les commandes suivantes: "
   set_message "info" "0" "Prometheus (port-forward): kubectl -n ${MONITORING_NAMESPACE} port-forward svc/${PROMETHEUS_RELEASE}-prometheus 9090:9090"
@@ -89,6 +92,7 @@ function install_prometheus()
   set_message "warn" "0" "ATTENTION: ne pas laisser l'exposition des secrets dans le code d'automatisation pour la production"
   set_message "info" "0" "Grafana admin password (modifier dès la première connexion):"
   kubectl -n "${MONITORING_NAMESPACE}" get secret "${PROMETHEUS_RELEASE}-grafana" -o jsonpath="{.data.admin-password}" 2>/dev/null | base64 -d && echo || true
+  error_CTRL "${?}" "Operation completed"
 }
 
 

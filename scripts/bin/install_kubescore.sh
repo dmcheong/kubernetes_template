@@ -28,12 +28,7 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-function version_lt()
-{
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 # set path for asdf library
 export PATH="${HOME}/.asdf/bin:${HOME}/.asdf/shims:${PATH}"
@@ -45,11 +40,11 @@ function install_kubescore()
 
   set_message "check" "0" "installation de kube-score version ${KUBESCORE_TARGET_VERSION} via asdf"
   asdf install kube-score "${KUBESCORE_TARGET_VERSION}" >/dev/null
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   set_message "check" "0" "activation de kube-score version ${KUBESCORE_TARGET_VERSION}"
   asdf set kube-score "${KUBESCORE_TARGET_VERSION}" >/dev/null
-  error_CTRL "${?}" ""
+  error_CTRL "${?}" "Operation completed"
 
   set_message "check" "0" "reconstruction des shims asdf"
   asdf reshim kube-score >/dev/null 2>&1 || true
@@ -65,7 +60,7 @@ function kubescore_version()
     then
       set_message "EdEMessage" "5" "Impossible de déterminer la version kube-score"
     else
-      version_lt "${CURRENT_KUBESCORE_VERSION}" "${KUBESCORE_MIN_VERSION}"
+      version_lt "${CURRENT_KUBESCORE_VERSION}" "${KUBESCORE_MIN_VERSION}" > /dev/null 2>&1
       if [[ ${?} -eq 0 ]]
         then
           set_message "EdEMessage" "5" "kube-score n'est pas à jour (actuelle: ${CURRENT_KUBESCORE_VERSION}, min: ${KUBESCORE_MIN_VERSION})"
@@ -74,7 +69,6 @@ function kubescore_version()
       fi
     fi
 }
-
 
 set_message "check" "0" "Vérification de l'installation de kube-score"
 command -v kube-score > /dev/null 2>&1

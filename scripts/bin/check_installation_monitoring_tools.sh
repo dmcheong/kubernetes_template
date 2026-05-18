@@ -28,15 +28,7 @@ if [[ ${core_functions_loaded} -ne 1 ]]
     . "${root_path}/lib/core.sh"
 fi
 
-set_new_directory "${root_path}/log"
-
-# function to comparison tools, use like this:
-# version_lt "CURRENT_VERSION_TOOL" "TOOL_MINIMUM_VERSION"
-version_lt()
-{
-  # true (0) si $1 < $2
-  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
-}
+# set_new_directory "${root_path}/log"
 
 set_message "info" "0" "Exécution du script de vérification des outils de monitoring"
 
@@ -49,3 +41,4 @@ do_load_file "${root_path}/bin/install_opentelemetry.sh" "OpenTelemetry install 
 
 
 set_message "info" "0" "Les services de monitoring Prometheus, Grafana et OpenTelemetry sont vérifiés"
+printf '%b\n'

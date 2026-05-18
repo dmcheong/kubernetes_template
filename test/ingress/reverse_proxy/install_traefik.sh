@@ -24,6 +24,7 @@ set_message "info" "0" "Namespace cible: ${TRAEFIK_NAMESPACE}"
 if ! kubectl get namespace "${TRAEFIK_NAMESPACE}" >/dev/null 2>&1; then
   set_message "info" "0" "Création du namespace: ${TRAEFIK_NAMESPACE}"
   kubectl create namespace "${TRAEFIK_NAMESPACE}" >/dev/null
+  error_CTRL "${?}" "Operation completed"
 else
   set_message "EdWMessage" "0" "Le namespace [${TRAEFIK_NAMESPACE}] est déjà présent."
 fi
@@ -34,12 +35,14 @@ fi
 if ! helm repo list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "${TRAEFIK_REPO_NAME}"; then
   set_message "info" "0" "Ajout du repository Helm: ${TRAEFIK_REPO_NAME}"
   helm repo add "${TRAEFIK_REPO_NAME}" "${TRAEFIK_REPO_URL}" >/dev/null
+  error_CTRL "${?}" "Operation completed"
 else
   set_message "EdWMessage" "0" "Le repository Helm [${TRAEFIK_REPO_NAME}] est déjà présent."
 fi
 
 set_message "info" "0" "Mise à jour des repositories Helm."
 helm repo update >/dev/null
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Installation / upgrade Traefik (idempotent via helm upgrade --install)
@@ -55,10 +58,12 @@ if helm status "${TRAEFIK_RELEASE}" -n "${TRAEFIK_NAMESPACE}" >/dev/null 2>&1; t
 else
   set_message "EdWMessage" "0" "Release [${TRAEFIK_RELEASE}] absente -> installation"
 fi
+error_CTRL "${?}" "Operation completed"
 
 # déploiement avec le fichier de valeurs traefik.yml
 set_message "info" "0" "Déploiement de Traefik avec le fichier: ${TRAEF_VALUES_FILE}"
 helm upgrade --install "${TRAEFIK_RELEASE}" "${TRAEFIK_CHART}" -n "${TRAEFIK_NAMESPACE}" -f "${TRAEF_VALUES_FILE}"
+error_CTRL "${?}" "Operation completed"
 
 #─────────────────────────────────────────────────────────────────────────────
 # Vérification post-installation
@@ -66,14 +71,17 @@ helm upgrade --install "${TRAEFIK_RELEASE}" "${TRAEFIK_CHART}" -n "${TRAEFIK_NAM
 printf "%b\n"
 set_message "check" "0" "Liste des pods Traefik"
 kubectl get pods -n "${TRAEFIK_NAMESPACE}" -l app.kubernetes.io/name=traefik || true
+error_CTRL "${?}" "Operation completed"
 
 printf "%b\n"
 set_message "check" "0" "Liste des services Traefik"
 kubectl get svc -n "${TRAEFIK_NAMESPACE}" || true
+error_CTRL "${?}" "Operation completed"
 
 printf "%b\n"
 set_message "check" "0" "ServiceMonitor Traefik (intégration Prometheus)"
 kubectl get servicemonitor -A | grep traefik || true
+error_CTRL "${?}" "Operation completed"
 
 # accès utiles pour les développeurs
 printf "%b\n"
