@@ -5,6 +5,7 @@
 #                et vérifie leur état et leurs logs.
 #                Cela doit servir d'exemple pour le test de mise en place de pod respectant la politique de Pods Security Admission
 # Prérequis    : namespace developpement et production créé, kubectl disponible
+# Source       : https://blog.teknews.cloud/kubernetes/aks/security/2026/04/16/Playing_with_Pod_Security_Admission.html
 #===============================================================================
 set_message "info" "0" "Gestion des pods avec la mise en place de la politique de Pods Security Admission et test."
 printf "%b\n"

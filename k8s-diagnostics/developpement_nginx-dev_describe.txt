@@ -1,0 +1,59 @@
+Name:             nginx-dev
+Namespace:        developpement
+Priority:         0
+Service Account:  default
+Node:             minikube/192.168.49.2
+Start Time:       Mon, 18 May 2026 19:43:32 +0200
+Labels:           <none>
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.62
+IPs:
+  IP:  10.244.0.62
+Containers:
+  nginx:
+    Container ID:   docker://0891ece60e9c842c7c227ae80b2df2a66082fa5128f6b2c44dc916a999618db1
+    Image:          nginx:stable
+    Image ID:       docker-pullable://nginx@sha256:842a3f99afd73859b5c647f8be6f0000849be286674e30d9dbcf7a6902a69487
+    Port:           80/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       CrashLoopBackOff
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    1
+      Started:      Wed, 20 May 2026 15:08:07 +0200
+      Finished:     Wed, 20 May 2026 15:08:07 +0200
+    Ready:          False
+    Restart Count:  38
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-89xqq (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-89xqq:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason          Age                   From     Message
+  ----     ------          ----                  ----     -------
+  Normal   Pulled          40h (x26 over 43h)    kubelet  spec.containers{nginx}: Container image "nginx:stable" already present on machine and can be accessed by the pod
+  Warning  BackOff         40h (x100 over 43h)   kubelet  spec.containers{nginx}: Back-off restarting failed container nginx in pod nginx-dev_developpement(4f4995b0-4364-45ef-84ce-8e200c7c0219)
+  Normal   SandboxChanged  33m                   kubelet  Pod sandbox changed, it will be killed and re-created.
+  Normal   Started         11m (x9 over 33m)     kubelet  spec.containers{nginx}: Container started
+  Normal   Created         6m41s (x10 over 33m)  kubelet  spec.containers{nginx}: Container created
+  Warning  BackOff         3m13s (x32 over 33m)  kubelet  spec.containers{nginx}: Back-off restarting failed container nginx in pod nginx-dev_developpement(4f4995b0-4364-45ef-84ce-8e200c7c0219)
+  Normal   Pulled          95s (x11 over 33m)    kubelet  spec.containers{nginx}: Container image "nginx:stable" already present on machine and can be accessed by the pod
