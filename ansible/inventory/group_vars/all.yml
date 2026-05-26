@@ -1,0 +1,27 @@
+---
+project_name: kubernetes_template
+
+system_packages:
+  - curl
+  - wget
+  - git
+  - unzip
+  - ca-certificates
+  - gnupg
+  - lsb-release
+  - apt-transport-https
+  - software-properties-common
+
+kubernetes_tools:
+  kubectl: true
+  helm: true
+  minikube: true
+
+docker:
+  install: true
+  service_enabled: true
+  service_state: started
+
+minikube:
+  driver: docker
+  profile: minikube

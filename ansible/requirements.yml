@@ -1,0 +1,14 @@
+---
+collections:
+
+  # Modules système Linux
+  - name: ansible.posix
+
+  # Gestion Docker
+  - name: community.docker
+
+  # Gestion Kubernetes
+  - name: kubernetes.core
+
+  # Utilitaires généraux
+  - name: community.general

@@ -1,0 +1,22 @@
+---
+- name: Mettre à jour le cache APT
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when:
+    - ansible_os_family == "Debian"
+    - common_update_cache | bool
+
+- name: Mettre à jour les paquets système
+  ansible.builtin.apt:
+    upgrade: dist
+  when:
+    - ansible_os_family == "Debian"
+    - common_upgrade_packages | bool
+
+- name: Installer les paquets système de base
+  ansible.builtin.apt:
+    name: "{{ system_packages }}"
+    state: present
+  when:
+    - ansible_os_family == "Debian"

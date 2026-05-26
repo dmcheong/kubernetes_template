@@ -1,0 +1,7 @@
+---
+- name: Validation environnement
+  hosts: local
+  become: true
+
+  roles:
+    - role: validation

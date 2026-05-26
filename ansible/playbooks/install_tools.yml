@@ -1,0 +1,7 @@
+---
+- name: Installation outils système
+  hosts: local
+  become: true
+
+  roles:
+    - role: common

@@ -1,0 +1,54 @@
+---
+- name: Installer dépendances Minikube
+  ansible.builtin.apt:
+    name:
+      - curl
+      - ca-certificates
+    state: present
+    update_cache: true
+  when:
+    - ansible_os_family == "Debian"
+    - minikube_install | bool
+
+- name: Télécharger Minikube
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    dest: /tmp/minikube-linux-amd64
+    mode: "0755"
+  when:
+    - minikube_install | bool
+
+- name: Installer Minikube
+  ansible.builtin.copy:
+    src: /tmp/minikube-linux-amd64
+    dest: /usr/local/bin/minikube
+    mode: "0755"
+    remote_src: true
+  when:
+    - minikube_install | bool
+
+- name: Vérifier installation Minikube
+  ansible.builtin.command:
+    cmd: minikube version
+  register: minikube_check
+  changed_when: false
+
+- name: Afficher version Minikube
+  ansible.builtin.debug:
+    var: minikube_check.stdout
+
+- name: Configurer driver Minikube par défaut
+  ansible.builtin.command:
+    cmd: minikube config set driver {{ minikube_driver }}
+  changed_when: false
+  become: false
+  when:
+    - minikube_install | bool
+
+- name: Démarrer Minikube si demandé
+  ansible.builtin.command:
+    cmd: minikube start --driver={{ minikube_driver }} --profile={{ minikube_profile }}
+  become: false
+  when:
+    - minikube_install | bool
+    - minikube_start_cluster | bool

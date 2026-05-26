@@ -1,0 +1,61 @@
+---
+- name: Installer dépendances Helm
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gpg
+    state: present
+    update_cache: true
+  when:
+    - ansible_os_family == "Debian"
+    - helm_install | bool
+
+- name: Créer dossier keyrings Helm
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+  when:
+    - helm_install | bool
+
+- name: Télécharger clé GPG Helm
+  ansible.builtin.shell: |
+    curl -fsSL https://baltocdn.com/helm/signing.asc \
+    | gpg --dearmor \
+    -o /etc/apt/keyrings/helm.gpg
+  args:
+    creates: /etc/apt/keyrings/helm.gpg
+  when:
+    - ansible_os_family == "Debian"
+    - helm_install | bool
+
+- name: Ajouter dépôt Helm
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/helm-stable-debian.list
+    content: |
+      deb [signed-by=/etc/apt/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main
+    mode: "0644"
+  when:
+    - ansible_os_family == "Debian"
+    - helm_install | bool
+
+- name: Installer Helm
+  ansible.builtin.apt:
+    name: helm
+    state: present
+    update_cache: true
+  when:
+    - ansible_os_family == "Debian"
+    - helm_install | bool
+
+- name: Vérifier installation Helm
+  ansible.builtin.command:
+    cmd: helm version --short
+  register: helm_check
+  changed_when: false
+
+- name: Afficher version Helm
+  ansible.builtin.debug:
+    var: helm_check.stdout

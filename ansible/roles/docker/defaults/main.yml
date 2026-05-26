@@ -1,0 +1,6 @@
+---
+docker_install: true
+docker_service_enabled: true
+docker_service_state: started
+docker_users:
+  - "{{ ansible_user_id }}"

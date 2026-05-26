@@ -1,0 +1,11 @@
+---
+- name: Configuration Kubernetes
+  hosts: local
+  become: true
+
+  roles:
+    - role: kubectl
+
+    - role: helm
+
+    - role: minikube
