@@ -1,3 +1,4 @@
 sealed-secrets.pem
 git_commit.sh
 **/logs/
+**/vault/hashicorp/cluster-keys.json
