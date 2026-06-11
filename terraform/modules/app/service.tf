@@ -1,0 +1,26 @@
+resource "kubernetes_service" "app" {
+  metadata {
+    name      = "${var.app_name}-service"
+    namespace = var.namespace_name
+
+    labels = {
+      app        = var.app_name
+      managed_by = var.managed_by
+    }
+  }
+
+  spec {
+    selector = {
+      app = var.app_name
+    }
+
+    port {
+      name        = "http"
+      port        = var.service_port
+      target_port = var.container_port
+      protocol    = "TCP"
+    }
+
+    type = var.service_type
+  }
+}

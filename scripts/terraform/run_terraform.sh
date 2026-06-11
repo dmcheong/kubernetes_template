@@ -33,11 +33,11 @@ main() {
     terraform validate
 
     log INFO "Plan Terraform"
-    terraform plan
+    terraform plan -out=tfplan
 
     if [[ "${1:-}" == "--apply" ]]; then
         log INFO "Application Terraform"
-        terraform apply -auto-approve
+        terraform apply -auto-approve tfplan
     else
         log INFO "Apply non lancé. Utilise --apply pour appliquer."
     fi

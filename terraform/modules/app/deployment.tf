@@ -1,0 +1,53 @@
+resource "kubernetes_deployment" "app" {
+  metadata {
+    name      = var.app_name
+    namespace = var.namespace_name
+
+    labels = {
+      app        = var.app_name
+      managed_by = var.managed_by
+    }
+  }
+
+  spec {
+    replicas = var.app_replicas
+
+    selector {
+      match_labels = {
+        app = var.app_name
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app        = var.app_name
+          managed_by = var.managed_by
+        }
+      }
+
+      spec {
+        container {
+          name  = var.app_name
+          image = var.app_image
+
+          port {
+            container_port = var.container_port
+          }
+
+          resources {
+            requests = {
+              cpu    = var.cpu_request
+              memory = var.memory_request
+            }
+
+            limits = {
+              cpu    = var.cpu_limit
+              memory = var.memory_limit
+            }
+          }
+        }
+      }
+    }
+  }
+}

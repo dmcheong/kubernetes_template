@@ -1,0 +1,40 @@
+resource "kubernetes_ingress_v1" "app" {
+  metadata {
+    name      = "${var.app_name}-ingress"
+    namespace = module.platform_namespace.name
+
+    labels = {
+      app        = var.app_name
+      managed_by = var.managed_by
+    }
+
+    annotations = {
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+
+    rule {
+      host = "${var.app_name}.local"
+
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+
+          backend {
+            service {
+              name = kubernetes_service.app.metadata[0].name
+
+              port {
+                number = var.service_port
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

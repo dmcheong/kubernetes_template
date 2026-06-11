@@ -90,3 +90,71 @@ variable "kong_chart_version" {
   type    = string
   default = "2.51.0"
 }
+
+#########################################
+# POSTGRESQL
+#########################################
+
+variable "postgresql_enabled" {
+  type    = bool
+  default = true
+}
+
+variable "postgresql_namespace" {
+  type    = string
+  default = "database"
+}
+
+variable "postgresql_release_name" {
+  type    = string
+  default = "postgresql"
+}
+
+variable "postgresql_chart_version" {
+  type    = string
+  default = "16.7.27"
+}
+
+variable "postgresql_database_name" {
+  type    = string
+  default = "kong"
+}
+
+variable "postgresql_username" {
+  type    = string
+  default = "kong"
+}
+
+variable "postgresql_password" {
+  type      = string
+  sensitive = true
+}
+
+#########################################
+# KONG - POSTGRESQL
+#########################################
+
+variable "kong_database" {
+  type    = string
+  default = "off"
+}
+
+variable "kong_pg_host" {
+  type    = string
+  default = "postgresql-postgresql.database.svc.cluster.local"
+}
+
+variable "kong_pg_database" {
+  type    = string
+  default = "kong"
+}
+
+variable "kong_pg_user" {
+  type    = string
+  default = "kong"
+}
+
+variable "kong_pg_password" {
+  type      = string
+  sensitive = true
+}
