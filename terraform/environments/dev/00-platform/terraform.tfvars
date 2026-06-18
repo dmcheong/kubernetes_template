@@ -31,3 +31,10 @@ kong_pg_host     = "postgresql.database.svc.cluster.local"
 kong_pg_database = "kong"
 kong_pg_user     = "kong"
 kong_pg_password = "kong_password_local"
+
+#########################################
+# MONITORING - PROMETHEUS/GRAFANA (STACK)
+#########################################
+
+grafana_admin_user     = "admin"
+grafana_admin_password = "graf_passw"

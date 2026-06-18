@@ -66,10 +66,13 @@ module "ingress_controller" {
 module "monitoring" {
   source = "../../../modules/monitoring"
 
-  namespace     = "monitoring"
   release_name  = "monitoring"
+  namespace     = "monitoring"
   chart_version = "61.7.2"
   values_file   = "${path.module}/values/monitoring_values.yaml"
+
+  grafana_admin_user     = var.grafana_admin_user
+  grafana_admin_password = var.grafana_admin_password
 }
 
 module "storage" {
@@ -80,26 +83,6 @@ module "storage" {
   reclaim_policy      = "Delete"
   volume_binding_mode = "Immediate"
   set_as_default      = false
-}
-
-module "grafana_secret" {
-  source = "../../../modules/secrets"
-
-  namespace   = "monitoring"
-  secret_name = "grafana-admin"
-
-  data = {
-    admin-user     = "admin"
-    admin-password = "admin"
-  }
-
-  labels = {
-    app = "grafana"
-  }
-
-  depends_on = [
-    module.monitoring
-  ]
 }
 
 module "argocd" {

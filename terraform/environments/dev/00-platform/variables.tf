@@ -158,3 +158,17 @@ variable "kong_pg_password" {
   type      = string
   sensitive = true
 }
+
+#########################################
+# MONITORING
+#########################################
+
+variable "grafana_admin_user" {
+  type    = string
+  default = "admin"
+}
+
+variable "grafana_admin_password" {
+  type      = string
+  sensitive = true
+}
