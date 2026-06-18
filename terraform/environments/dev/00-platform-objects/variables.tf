@@ -23,7 +23,7 @@ variable "replicas" {
 }
 
 variable "ingress_host" {
-  description = "Nom DNS local utilisé pour exposer l'application NGINX via ingress."
+  description = "Nom DNS local utilisé pour exposer NGINX via Ingress."
   type        = string
   default     = "nginx-demo.local"
 }
