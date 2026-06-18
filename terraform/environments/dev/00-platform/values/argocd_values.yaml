@@ -1,0 +1,13 @@
+global:
+  domain: argocd.local
+
+server:
+  service:
+    type: NodePort
+
+  ingress:
+    enabled: false
+
+configs:
+  params:
+    server.insecure: true

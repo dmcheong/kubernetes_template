@@ -1,0 +1,10 @@
+controller:
+  service:
+    type: NodePort
+
+  ingressClassResource:
+    name: nginx
+    enabled: true
+    default: true
+
+  ingressClass: nginx
