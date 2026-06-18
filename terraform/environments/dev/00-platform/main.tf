@@ -1,5 +1,5 @@
 module "platform_namespace" {
-  source = "../modules/namespace"
+  source = "../../../modules/namespace"
 
   name        = var.namespace_name
   environment = var.environment
@@ -7,7 +7,7 @@ module "platform_namespace" {
 }
 
 module "app" {
-  source = "../modules/app"
+  source = "../../../modules/app"
 
   namespace_name = module.platform_namespace.name
   app_name       = var.app_name
@@ -27,7 +27,7 @@ module "app" {
 }
 
 module "kong" {
-  source = "../modules/kong"
+  source = "../../../modules/kong"
 
   enabled        = var.kong_enabled
   namespace_name = var.kong_namespace
@@ -42,7 +42,7 @@ module "kong" {
 }
 
 module "postgresql" {
-  source = "../modules/postgresql"
+  source = "../../../modules/postgresql"
 
   enabled        = var.postgresql_enabled
   namespace_name = var.postgresql_namespace
@@ -55,7 +55,7 @@ module "postgresql" {
 }
 
 module "ingress_controller" {
-  source = "../modules/ingress-controller"
+  source = "../../../modules/ingress-controller"
 
   namespace     = "ingress-nginx"
   release_name  = "ingress-nginx"
@@ -64,7 +64,7 @@ module "ingress_controller" {
 }
 
 module "monitoring" {
-  source = "../modules/monitoring"
+  source = "../../../modules/monitoring"
 
   namespace     = "monitoring"
   release_name  = "monitoring"
@@ -73,7 +73,7 @@ module "monitoring" {
 }
 
 module "storage" {
-  source = "../modules/storage"
+  source = "../../../modules/storage"
 
   storage_class_name  = "local-standard"
   provisioner         = "k8s.io/minikube-hostpath"
@@ -83,7 +83,7 @@ module "storage" {
 }
 
 module "grafana_secret" {
-  source = "../modules/secrets"
+  source = "../../../modules/secrets"
 
   namespace   = "monitoring"
   secret_name = "grafana-admin"
@@ -103,7 +103,7 @@ module "grafana_secret" {
 }
 
 module "argocd" {
-  source = "../modules/argocd"
+  source = "../../../modules/argocd"
 
   namespace     = "argocd"
   release_name  = "argocd"
@@ -117,7 +117,7 @@ module "argocd" {
 }
 
 module "cert_manager" {
-  source = "../modules/cert-manager"
+  source = "../../../modules/cert-manager"
 
   namespace     = "cert-manager"
   release_name  = "cert-manager"
