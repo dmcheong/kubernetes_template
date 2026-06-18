@@ -1,14 +1,17 @@
-module "argocd_demo_app" {
-  source = "../modules/argocd-application"
+resource "kubernetes_config_map" "platform_objects_validation" {
+  metadata {
+    name      = "platform-objects-validation"
+    namespace = "default"
 
-  name                  = "demo-app"
-  namespace             = "argocd"
-  repo_url              = "https://github.com/TON_USER/TON_REPO.git"
-  target_revision       = "main"
-  path                  = "kubernetes/demo-app"
-  destination_namespace = "demo-app"
+    labels = {
+      environment = var.environment
+      managed_by  = "terraform"
+      layer       = "platform-objects"
+    }
+  }
 
-  auto_sync = false
-  prune     = false
-  self_heal = false
+  data = {
+    status  = "initialized"
+    purpose = "Validate dev platform objects layer"
+  }
 }
