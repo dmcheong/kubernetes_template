@@ -64,3 +64,39 @@ resource "kubernetes_service" "nginx" {
     type = "ClusterIP"
   }
 }
+
+resource "kubernetes_ingress_v1" "nginx" {
+  metadata {
+    name      = var.app_name
+    namespace = kubernetes_namespace.demo.metadata[0].name
+
+    annotations = {
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+
+    rule {
+      host = var.ingress_host
+
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+
+          backend {
+            service {
+              name = kubernetes_service.nginx.metadata[0].name
+
+              port {
+                number = 80
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
