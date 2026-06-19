@@ -13,7 +13,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/../.." \
 
 ANSIBLE_DIR="${ROOT_DIR}/ansible"
 
-CONFIG="${ANSIBLE_DIR}/ansible.cfg"
+CONFIG="${ROOT_DIR}/ansible.cfg"
 
 INVENTORY="${ANSIBLE_DIR}/inventory/local.ini"
 

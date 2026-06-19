@@ -1,6 +1,7 @@
 # kubernetes_template
 
-Environnement d'apprentissage Kubernetes automatisé avec Minikube.
+Environnement d'apprentissage Kubernetes avec un déploiment automatisé via script Bash uniquement dans un cluster Minikube. Ce README.md ne concerne que la partie Via Bash.
+- note: Il existe également une partie du déploiement qui peut être exécuté via Ansible et Terraform dans ce projet. Cette section est plus détailler avec l'ensemble des readme.md dans le répertoire docs/
 
 > Source pédagogique : <https://github.com/stephrobert/containers-training>
 > Blog : <https://blog.stephane-robert.info>
@@ -9,10 +10,10 @@ Environnement d'apprentissage Kubernetes automatisé avec Minikube.
 
 ## Prérequis
 
-| Outil | Version min | Notes |
-|---|---|---|
-| Docker Engine | 24.0.0 | doit être installé et démarré avant tout |
-| Bash | 5.x | scripts POSIX |
+| Outil | Version minimale | Notes |
+|---|---:|---|
+| Docker Engine | 24.0.0 | Doit être installé et démarré |
+| Bash | 5.x | Utilisé pour les scripts d’orchestration |
 
 ---
 
@@ -101,7 +102,7 @@ KUBECTL_VERSION="1.35.0"
 | `monitoring` | Prometheus, Grafana, OpenTelemetry Collector |
 | `traefik` | Ingress controller Traefik |
 | `kong` | API Gateway Kong |
-| `Hashicorp` | Vault |
+| `hashicorp` | Vault |
 | `kube-system` | Controller SealedSecrets |
 
 ---
@@ -126,12 +127,12 @@ rm -rf ~/.asdf
 - Le partage NFS est configuré avec `no_root_squash` et permissions `777` — **environnement de développement uniquement**.
 
 
-## Intégration partiel du Framework CAST
+## Intégration partielle du Framework CAST
 
 - CAST est un framework BASH de ARNAUD CRAMPET
-- Intégration de la partie sur l'affichage des retours de commandes et traitements des erreurs dans le terminal.
+- Intégration partielle du framework sur la partie concernant l'affichage des retours de commandes et traitements des erreurs dans le terminal.
 
 ```
 lib
-└── core.sh`
+└── core.sh
 ```

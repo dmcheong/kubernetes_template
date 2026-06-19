@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+# set -euo 
+
+# Script d'exécution global de Terraform, à ne faire qu'en mode Lab.
+# Suite de l'exécution du script ./ansible.sh
 
 #########################################
 # VARIABLES

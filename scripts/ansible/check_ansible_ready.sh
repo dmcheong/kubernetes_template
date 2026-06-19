@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+# set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 ANSIBLE_DIR="${ROOT_DIR}/ansible"
 
-CONFIG_FILE="${ANSIBLE_DIR}/ansible.cfg"
+CONFIG_FILE="${ROOT_DIR}/ansible.cfg"
 
 INVENTORY_FILE="${ANSIBLE_DIR}/inventory/local.ini"
 

@@ -63,12 +63,31 @@
     state: "{{ docker_service_state }}"
   when:
     - docker_install | bool
+    - docker_manage_service | bool
 
-- name: Ajouter l’utilisateur au groupe docker
-  ansible.builtin.user:
-    name: "{{ item }}"
-    groups: docker
-    append: true
-  loop: "{{ docker_users }}"
+# - name: Ajouter l’utilisateur au groupe docker
+#   ansible.builtin.user:
+#     name: "{{ item }}"
+#     groups: docker
+#     append: true
+#   loop: "{{ docker_users }}"
+#   when:
+#     - docker_install | bool
+
+- name: Vérifier que Docker est utilisable
+  ansible.builtin.command:
+    cmd: docker info
+  register: docker_info_check
+  changed_when: false
+  become: true
+  when:
+    - docker_install | bool
+
+- name: Informer sur la session utilisateur Docker
+  ansible.builtin.debug:
+    msg:
+      - "Docker est installé et accessible avec privilèges."
+      - "Si 'docker info' échoue sans sudo, ouvre une nouvelle session ou lance : newgrp docker"
+      - "Cela permet de prendre en compte l’ajout de l’utilisateur au groupe docker."
   when:
     - docker_install | bool

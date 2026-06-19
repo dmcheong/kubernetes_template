@@ -13,6 +13,7 @@ system_packages:
   - software-properties-common
 
 docker_install: true
+docker_manage_service: false
 docker_service_enabled: true
 docker_service_state: started
 docker_users:

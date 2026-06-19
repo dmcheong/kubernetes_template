@@ -2,6 +2,9 @@
 
 # set -euo pipefail
 
+# Script d'exécution global d'Ansible, à ne faire qu'en mode Lab.
+# Ensuite exécuter le script ./terraform.sh
+
 #########################################
 # VARIABLES
 #########################################
