@@ -15,8 +15,8 @@ resource "helm_release" "this" {
   chart            = "postgresql"
   version          = var.chart_version
   create_namespace = false
-  wait             = false
-  timeout          = 300
+  wait             = true
+  timeout          = 600
 
   set = [
     {
@@ -30,22 +30,6 @@ resource "helm_release" "this" {
     {
       name  = "auth.password"
       value = var.password
-    },
-    {
-      name  = "global.security.allowInsecureImages"
-      value = "true"
-    },
-    {
-      name  = "image.registry"
-      value = "docker.io"
-    },
-    {
-      name  = "image.repository"
-      value = "library/postgres"
-    },
-    {
-      name  = "image.tag"
-      value = "16"
     }
   ]
 

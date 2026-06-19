@@ -1,6 +1,6 @@
 ---
-- name: Configuration Docker
-  hosts: local
+- name: Configurer Docker
+  hosts: all
   become: true
 
   roles:

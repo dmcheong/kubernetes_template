@@ -12,16 +12,19 @@ system_packages:
   - apt-transport-https
   - software-properties-common
 
-kubernetes_tools:
-  kubectl: true
-  helm: true
-  minikube: true
+docker_install: true
+docker_service_enabled: true
+docker_service_state: started
+docker_users:
+  - "{{ ansible_user_id }}"
 
-docker:
-  install: true
-  service_enabled: true
-  service_state: started
+kubectl_install: true
+kubectl_minor_version: "v1.33"
 
-minikube:
-  driver: docker
-  profile: minikube
+helm_install: true
+
+minikube_install: true
+minikube_version: "v1.36.0"
+minikube_driver: docker
+minikube_profile: minikube
+minikube_start_cluster: false

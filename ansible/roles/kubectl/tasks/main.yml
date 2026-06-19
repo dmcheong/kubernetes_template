@@ -1,5 +1,5 @@
 ---
-- name: Installer dépendances kubectl
+- name: Installer les dépendances kubectl
   ansible.builtin.apt:
     name:
       - apt-transport-https
@@ -12,31 +12,31 @@
     - ansible_os_family == "Debian"
     - kubectl_install | bool
 
-- name: Créer dossier keyrings Kubernetes
+- name: Créer le dossier keyrings APT
   ansible.builtin.file:
     path: /etc/apt/keyrings
     state: directory
     mode: "0755"
   when:
+    - ansible_os_family == "Debian"
     - kubectl_install | bool
 
 - name: Télécharger clé Kubernetes
   ansible.builtin.shell: |
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key \
-    | gpg --dearmor \
-    -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    curl -fsSL "https://pkgs.k8s.io/core:/stable:/{{ kubectl_minor_version }}/deb/Release.key" | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   args:
     creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   when:
+    - ansible_os_family == "Debian"
     - kubectl_install | bool
 
-- name: Ajouter dépôt Kubernetes
-  ansible.builtin.copy:
-    dest: /etc/apt/sources.list.d/kubernetes.list
-    content: |
-      deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /
-    mode: "0644"
+- name: Ajouter le dépôt Kubernetes
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ kubectl_minor_version }}/deb/ /"
+    filename: kubernetes
+    state: present
   when:
+    - ansible_os_family == "Debian"
     - kubectl_install | bool
 
 - name: Installer kubectl
@@ -45,14 +45,5 @@
     state: present
     update_cache: true
   when:
+    - ansible_os_family == "Debian"
     - kubectl_install | bool
-
-- name: Vérifier installation kubectl
-  ansible.builtin.command:
-    cmd: kubectl version --client
-  register: kubectl_check
-  changed_when: false
-
-- name: Afficher version kubectl
-  ansible.builtin.debug:
-    var: kubectl_check.stdout

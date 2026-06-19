@@ -1,2 +1,38 @@
 ---
-# Aucun handler requis actuellement
+- name: Vérifier Docker CLI
+  ansible.builtin.command:
+    cmd: docker --version
+  register: docker_version
+  changed_when: false
+
+- name: Vérifier Docker daemon
+  ansible.builtin.command:
+    cmd: docker info
+  register: docker_info
+  changed_when: false
+
+- name: Vérifier kubectl client
+  ansible.builtin.command:
+    cmd: kubectl version --client=true
+  register: kubectl_version
+  changed_when: false
+
+- name: Vérifier Helm
+  ansible.builtin.command:
+    cmd: helm version --short
+  register: helm_version
+  changed_when: false
+
+- name: Vérifier Minikube
+  ansible.builtin.command:
+    cmd: minikube version --short
+  register: minikube_version_check
+  changed_when: false
+
+- name: Afficher le résumé de validation
+  ansible.builtin.debug:
+    msg:
+      - "{{ docker_version.stdout }}"
+      - "{{ kubectl_version.stdout }}"
+      - "{{ helm_version.stdout }}"
+      - "{{ minikube_version_check.stdout }}"

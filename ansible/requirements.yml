@@ -7,8 +7,5 @@ collections:
   # Gestion Docker
   - name: community.docker
 
-  # Gestion Kubernetes
-  - name: kubernetes.core
-
   # Utilitaires généraux
   - name: community.general

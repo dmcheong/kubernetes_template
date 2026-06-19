@@ -22,21 +22,18 @@
 
 - name: Télécharger clé GPG Helm
   ansible.builtin.shell: |
-    curl -fsSL https://baltocdn.com/helm/signing.asc \
-    | gpg --dearmor \
-    -o /etc/apt/keyrings/helm.gpg
+    curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor -o /usr/share/keyrings/helm.gpg
   args:
-    creates: /etc/apt/keyrings/helm.gpg
+    creates: /usr/share/keyrings/helm.gpg
   when:
     - ansible_os_family == "Debian"
     - helm_install | bool
 
-- name: Ajouter dépôt Helm
-  ansible.builtin.copy:
-    dest: /etc/apt/sources.list.d/helm-stable-debian.list
-    content: |
-      deb [signed-by=/etc/apt/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main
-    mode: "0644"
+- name: Ajouter le dépôt Helm
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
+    filename: helm-stable-debian
+    state: present
   when:
     - ansible_os_family == "Debian"
     - helm_install | bool
